@@ -16,7 +16,7 @@ predictor = dlib.shape_predictor(
 
 # 불러올 이미지 지정
 path_read = "data/images/faces_for_test/"
-img = cv2.imread(path_read + "test_faces_4.jpg")
+img = cv2.imread(path_read + "test_faces_5.jpg")
 
 # 저장할 경로 지정
 path_save = "data/images/faces_separated/"
@@ -57,12 +57,16 @@ def main():
         height = face[3] - face[1]
         width = face[2] - face[0]
 
-        # 얼굴 사이즈에 맞는 빈 이미지 생성
-        img_blank = np.zeros((height, width, 3), np.uint8)
+        h_2 = int(height*0.1)
+        w_2 = int(width*0.1)
 
-        for i in range(height):
-            for j in range(width):
-                img_blank[i][j] = img[face[1] + i][face[0] + j]
+        # 얼굴 사이즈에 맞는 빈 이미지 생성
+        img_blank = np.zeros((height+7*h_2, width+4*w_2, 3), np.uint8)
+
+        for i in range(height+7*h_2):
+            for j in range(width+4*w_2):
+                img_blank[i][j] = img[face[1] - 5 *
+                                      h_2 + i][face[0] - 2 * w_2 + j]
 
         # cv2.imshow("face_"+str(num+1), img_blank)
 
