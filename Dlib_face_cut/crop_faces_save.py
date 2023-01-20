@@ -57,6 +57,7 @@ def main():
         height = face[3] - face[1]
         width = face[2] - face[0]
 
+        # 크기 조정에 쓰일 변수.
         h_2 = int(height*0.1)
         w_2 = int(width*0.1)
 
