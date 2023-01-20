@@ -1,5 +1,6 @@
 # 버전
-- Python 3.8
+
+- Python 3.8 (https://www.python.org/downloads/release/python-386/)
 
 ### dlib 설치 오류 해결법
 
