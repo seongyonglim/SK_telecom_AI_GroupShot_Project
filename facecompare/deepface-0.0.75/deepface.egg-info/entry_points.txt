@@ -1,0 +1,2 @@
+[console_scripts]
+deepface = deepface.DeepFace:cli
