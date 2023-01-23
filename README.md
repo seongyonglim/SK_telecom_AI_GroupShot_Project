@@ -16,7 +16,7 @@
 
 ---
 
-## DeepLearning
+## ML
 
 ### Multiple Face Detect and Crop
 
