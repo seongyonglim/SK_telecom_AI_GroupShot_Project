@@ -18,6 +18,11 @@
 
 ## ML
 
+### All-in-one
+
+- Combine\run.py
+  - 아래 딥러닝 기능을 한번에 실행하는 코드
+
 ### Multiple Face Detect and Crop
 
 - Dlib_face_cut\crop_faces_save.py
