@@ -37,6 +37,12 @@
 
 ###
 
-- ***
+---
 
-리드미 엄청 써놨는데 또 날라갔다 ㅠㅠㅠㅠㅜ
+## Front-end
+
+Version required
+
+- nodejs
+- react-native
+- react
