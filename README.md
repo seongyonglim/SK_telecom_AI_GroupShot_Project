@@ -46,3 +46,6 @@ Version required
 - nodejs
 - react-native
 - react
+  곧 추가예정임미다
+
+상세 버전은 package.json확인
