@@ -68,9 +68,9 @@ def main():
             # cv2.imshow("face_"+str(num+1), img_blank)
 
             # 이미지 저장
-            print("Save into:", path_save + file +
+            print("Save into:", path_save + file[:-4] +
                   "_" + str(num2 + 1) + ".jpg")
-            cv2.imwrite(path_save + file + "_" +
+            cv2.imwrite(path_save + file[:-4] + "_" +
                         str(num2 + 1) + ".jpg", img_blank)
 
 
