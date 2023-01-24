@@ -6,6 +6,16 @@
 - 얼굴 crop 코드: crop_faces_save.py
 - 전체 기능 동작 코드: run.py
 
+## pip install -r requirements.txt 에서 dlib 오류날 경우
+
+requirements.txt 에서 dlib 파트 삭제 후
+
+```
+$ pip install dlib-19.19.0-cp38-cp38-win_amd64
+```
+
+입력하여 dlib 따로 설치
+
 ## 실행법
 
 ```
