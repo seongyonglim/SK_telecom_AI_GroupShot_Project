@@ -3,8 +3,10 @@
 대표사진 선정 후 사진 유사도를 측정하여 대포사진과 유사한 사진들로부터 얼굴부분만 crop 하고 JPG 파일 형태로 저장하는 코드입니다.
 
 - 사진 유사도 코드: imagecompare.py
-- 얼굴 crop 코드: crop_faces_save.py
-- 전체 기능 동작 코드: run.py
+- 얼굴 crop 코드 (마스크 탐지 불가): detect_faces.py
+- 얼굴 crop 코드 (마스크 탐지 가능): detect_faces_masks.py
+- 전체 기능 동작 코드 (마스크 탐지 가능): run.py
+- 전체 기능 동작 코드 (마스크 탐지 불가): run_face_only.py
 
 ## pip install -r requirements.txt 에서 dlib 오류날 경우
 
