@@ -37,8 +37,7 @@ def main():
         image = cv2.imread(path_read+file)
         faces = detector(image, 1)
 
-        print("찾은 얼굴 수:", len(faces), '\n')
-        print(faces)
+        print(f"{file}: Found {len(faces)} faces.")
 
         c_faces = []
 
