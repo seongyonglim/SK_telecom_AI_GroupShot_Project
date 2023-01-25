@@ -113,6 +113,10 @@ def main(img_name):
     # 대표이미지 시간 정보 불러오기
     image_a_worker = Worker(image_a)
     image_a_date = image_a_worker.date
+    print(image_a_date)
+    if image_a_date == None:
+        print('Selected picture has no date information')
+        return
     date_of_image_a = image_a_date.split()[0]  # 유저가 선택한 이미지 날짜
     # time_of_image_a = image_a_date.split()[1]  # 유저가 선택한 이미지 시간
 
@@ -177,5 +181,5 @@ def main(img_name):
 
 
 if __name__ == '__main__':
-    img_name = '01.jpg'
+    img_name = 'c (1).jpg'
     main(img_name)
