@@ -167,7 +167,7 @@ if __name__ == '__main__':
 
     
 
-            if percentage_of_image_similarity_measure < 16:
+            if percentage_of_image_similarity_measure < 12:
                 # print("{}와 {}는 \n 같은 사진입니다".format(userselected,phonegallery))
                 # print(SAVE_CNT)
 
