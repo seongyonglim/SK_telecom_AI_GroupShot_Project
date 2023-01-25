@@ -40,7 +40,13 @@
 - faceswap/Best_Image_swap.py
   - 얼굴의 landmark, 각 노드값을 받아와서 지정된 위치에 따라 얼굴을 swap하는 python code입니다. 최종 결과사진은 지정된 폴더에 저장합니다.
 
-###
+### ImageDate
+
+- ImageDate/image_date.py
+  - 이미지 파일에서 날짜 데이터를 추출하여 같은 날짜에 생성된 이미지를 추출합니다.
+
+- ImageDate/date_and_compare.py
+  - 갤러리 폴더에서 유저가 선택한 이미지와 1차로 같은 날짜에 촬영된 이미지를 먼저 분류하고, 2차로 이미지의 유사도를 판별하여 유사한 사진들을 폴더로 생성합니다,
 
 ---
 
