@@ -1,6 +1,5 @@
 import os
-from PIL import Image
-from PIL import ImageChops
+from PIL import Image, ImageChops, ImageOps
 from PIL.ExifTags import TAGS, GPSTAGS
 
 
@@ -172,6 +171,7 @@ def main(img_name):
 
     # 비슷한 이미지들을 전부 similar_images 폴더에 JPEG 이름으로 저장
     for i in range(len(similar_img)):
+        similar_img[i] = ImageOps.exif_transpose(similar_img[i])
         similar_img[i].save(path_save+similar_img_names[i], 'JPEG')
     return selected_image_name
 
