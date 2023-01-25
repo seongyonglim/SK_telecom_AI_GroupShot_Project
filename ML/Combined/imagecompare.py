@@ -1,6 +1,38 @@
 import os
 from PIL import Image
 from PIL import ImageChops
+from PIL.ExifTags import TAGS, GPSTAGS
+
+
+class Worker(object):
+    def __init__(self, img):
+        self.img = img
+        self.get_exif_data()
+        self.date = self.get_date_time()
+        super(Worker, self).__init__()
+
+    def get_exif_data(self):
+        exif_data = {}
+        info = self.img._getexif()
+        if info:
+            for tag, value in info.items():
+                decoded = TAGS.get(tag, tag)
+                if decoded == "GPSInfo":
+                    gps_data = {}
+                    for t in value:
+                        sub_decoded = GPSTAGS.get(t, t)
+                        gps_data[sub_decoded] = value[t]
+
+                    exif_data[decoded] = gps_data
+                else:
+                    exif_data[decoded] = value
+        self.exif_data = exif_data
+        # return exif_data
+
+    def get_date_time(self):
+        if 'DateTime' in self.exif_data:
+            date_and_time = self.exif_data['DateTime']
+            return date_and_time
 
 
 class ImageCompareException(Exception):
@@ -79,6 +111,12 @@ def main(img_name):
     selected_image_name = img_name
     image_a = Image.open(path_read+selected_image_name)
 
+    # 대표이미지 시간 정보 불러오기
+    image_a_worker = Worker(image_a)
+    image_a_date = image_a_worker.date
+    date_of_image_a = image_a_date.split()[0]  # 유저가 선택한 이미지 날짜
+    # time_of_image_a = image_a_date.split()[1]  # 유저가 선택한 이미지 시간
+
     # 같은 이미지 이름과 파일 저장 리스트
     similar_img = []
     similar_img_names = []
@@ -89,7 +127,22 @@ def main(img_name):
 
     # 대표이미지와 PhoneGalleryImage 폴더에 있는모든 이미지를 하나씩 비교하여 유사도 측정
     for file in files:
+
+        # 이미지를 하나씩 불러온다 (시간 정보도 함께 불러온다)
         image_b = Image.open(path_read+file)
+        image_b_worker = Worker(image_b)
+        image_b_date = image_b_worker.date
+
+        if image_b_date == None:
+            continue
+        else:
+            pass
+
+        date_of_image_b = image_b_date.split()[0]  # 갤러리에서 선택한 이미지 날짜
+        # time_of_image_b = image_b_date.split()[1]  # 갤러리에서 선택한 이미지 시간
+
+        if date_of_image_a != date_of_image_b:
+            continue
 
         percentage_of_image_similarity_measure = image_diff_percent(
             image_a, image_b)
@@ -124,4 +177,5 @@ def main(img_name):
 
 
 if __name__ == '__main__':
-    main()
+    img_name = '01.jpg'
+    main(img_name)
