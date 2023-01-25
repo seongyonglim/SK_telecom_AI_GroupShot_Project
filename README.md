@@ -22,6 +22,7 @@
 
 - Combine\run.py
   - 아래 딥러닝 기능을 한번에 실행하는 코드
+  - 유저가 선택한 이미지와 날짜비교, 유사도 비교를 하고 얼굴부분을 crop하여 보여줍니다.
 
 ### Multiple Face Detect and Crop
 
