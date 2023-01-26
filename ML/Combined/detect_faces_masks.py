@@ -100,6 +100,8 @@ def main():
                   "_" + str(num2 + 1) + ".jpg")
             cv2.imwrite(path_save + file[:-4] + "_" +
                         str(num2 + 1) + ".jpg", img_blank)
+
+           
     print(sum)
 
 

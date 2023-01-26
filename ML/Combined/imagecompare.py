@@ -2,7 +2,6 @@ import os
 from PIL import Image, ImageChops, ImageOps
 from PIL.ExifTags import TAGS, GPSTAGS
 
-
 class Worker(object):
     def __init__(self, img):
         self.img = img
@@ -150,7 +149,7 @@ def main(img_name):
               percentage_of_image_similarity_measure)
 
         # 유사도가 12미만일 경우 비슷한 이미지로 판단하여 비슷한 이미지 목록에 넣는다
-        if percentage_of_image_similarity_measure < 12:
+        if percentage_of_image_similarity_measure < 11:
             similar_img.append(image_b)
             similar_img_names.append(file)
         else:
