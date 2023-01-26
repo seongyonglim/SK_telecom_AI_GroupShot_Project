@@ -63,7 +63,6 @@ def main():
         c_faces = []
         img_path = os.path.join(path_read, file)
         orig_image = cv2.imread(img_path)
-        cv2.imshow('or',orig_image)
         if orig_image is None:
             continue
         image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
@@ -105,15 +104,21 @@ def main():
             # 크롭된 얼굴을 크롭 좌표값을 기억해 다른 사진에다가 좌표값을 씌워서 크롭된 얼굴을 덮어씌워, 자연스래 합성합니다.
             img2_face_mask = np.zeros_like(img_blank)
             img2_face_mask = cv2.bitwise_not(img2_face_mask)
-            
-            center_face2 = (int((box[0] + box[2]) / 2), int((box[1] + box[3]) / 2))
-           
-            seamlessclone = cv2.seamlessClone(img_blank, orig_image, img2_face_mask, center_face2, cv2.NORMAL_CLONE)
+
+            center_face2 = (int((box[0] + box[2]) / 2),
+                            int((box[1] + box[3]) / 2))
+
+            seamlessclone = cv2.seamlessClone(
+                img_blank, orig_image, img2_face_mask, center_face2, cv2.NORMAL_CLONE)
             # cv2.imshow('',seamlessclone)
             path_final = "images/BestShot/"
             cv2.imwrite(path_final + file[:-4] + "_" +
                         str(num2 + 1) + "AI_BestShotMake.jpg", seamlessclone)
     print(sum)
+
+    # img_blank 모두 저장 list형태  [f(1)_1.img, f(1)_2.img]
+    # img_blank 파일 이름 list형태로 저장  ['f(1)_1.jpg', 'f(1)_2.jpg']
+    # 각 사진들 얼굴 좌표 [[f(2).jpg 얼굴 위치들], [f(3).jpg 얼굴위치들]]
 
 
 if __name__ == '__main__':
