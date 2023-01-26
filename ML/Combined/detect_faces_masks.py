@@ -59,6 +59,11 @@ def main():
     listdir = os.listdir(path_read)
     sum = 0
 
+    # 합성 python 코드 때 필요한 리스트들
+
+    cropped_face_names = []  # crop 된 이미지 이름 저장 리스트
+    cropped_face_coordinates = []  # crop 된 이미지의 시작점 좌표값 저장 리스트
+
     for file in listdir:
         c_faces = []
         img_path = os.path.join(path_read, file)
@@ -77,6 +82,7 @@ def main():
         print(f"{file}: Found {len(probs)} faces.")
 
         c_faces = sorted(c_faces, key=lambda x: x[0])
+
         for num2, face in enumerate(c_faces):
             # 사각형 사이즈 계산
             height = face[3] - face[1]
@@ -87,39 +93,26 @@ def main():
             w_2 = int(width*0.05)
 
             # 얼굴 사이즈에 맞는 빈 이미지 생성
-            img_blank = np.zeros((height+14*h_2, width+8*w_2, 3), np.uint8)
-            for i in range(height+14*h_2):
-                for j in range(width+8*w_2):
-                    k = face[1] - 13 * h_2 + i
-                    l = face[0] - 4 * w_2 + j
+            img_blank = np.zeros((height+34*h_2, width+34*w_2, 3), np.uint8)
+            for i in range(height+34*h_2):
+                for j in range(width+34*w_2):
+                    k = face[1] - 20 * h_2 + i
+                    l = face[0] - 17 * w_2 + j
                     if k < len(orig_image) and l < len(orig_image[k]):
                         img_blank[i][j] = orig_image[k][l]
 
             # 이미지 저장
-            print("Save into:", path_save + file[:-4] +
-                  "_" + str(num2 + 1) + ".jpg")
-            cv2.imwrite(path_save + file[:-4] + "_" +
-                        str(num2 + 1) + ".jpg", img_blank)
+            cropped_face_name = file[:-4] + "_" + str(num2 + 1) + ".jpg"
+            print("Save into:", path_save + cropped_face_name)
+            cv2.imwrite(path_save + cropped_face_name, img_blank)
 
-            # 크롭된 얼굴을 크롭 좌표값을 기억해 다른 사진에다가 좌표값을 씌워서 크롭된 얼굴을 덮어씌워, 자연스래 합성합니다.
-            img2_face_mask = np.zeros_like(img_blank)
-            img2_face_mask = cv2.bitwise_not(img2_face_mask)
+            cropped_face_names.append(cropped_face_name)
+            cropped_face_coordinates.append(
+                [face[0] - 17 * w_2, face[1] - 20 * h_2])
 
-            center_face2 = (int((box[0] + box[2]) / 2),
-                            int((box[1] + box[3]) / 2))
-
-            seamlessclone = cv2.seamlessClone(
-                img_blank, orig_image, img2_face_mask, center_face2, cv2.NORMAL_CLONE)
-            # cv2.imshow('',seamlessclone)
-            path_final = "images/BestShot/"
-            cv2.imwrite(path_final + file[:-4] + "_" +
-                        str(num2 + 1) + "AI_BestShotMake.jpg", seamlessclone)
     print(sum)
-
-    # img_blank 모두 저장 list형태  [f(1)_1.img, f(1)_2.img]
-    # img_blank 파일 이름 list형태로 저장  ['f(1)_1.jpg', 'f(1)_2.jpg']
-    # 각 사진들 얼굴 좌표 [[f(2).jpg 얼굴 위치들], [f(3).jpg 얼굴위치들]]
+    return cropped_face_names, cropped_face_coordinates
 
 
 if __name__ == '__main__':
-    main()
+    i, n, c = main()
