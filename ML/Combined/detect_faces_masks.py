@@ -102,29 +102,17 @@ def main():
             cv2.imwrite(path_save + file[:-4] + "_" +
                         str(num2 + 1) + ".jpg", img_blank)
 
-            # Reconstructing destination face
-            
-            height, width, channels = orig_image.shape
-            orig_black = np.zeros((height, width, channels), np.uint8)
-            # img_blank = np.zeros((height+14*h_2, width+8*w_2, 3), np.uint8)
-            # newarea = orig_image[int(box[1]):int(box[1])+height,int(box[0]):int(box[0])+width]
-            # blackarea = orig_black[int(box[1]):int(box[1])+height,int(box[0]):int(box[0])+width]
-            # gr = cv2.cvtColor(img_blank, cv2.COLOR_BGR2GRAY)
+            # 크롭된 얼굴을 크롭 좌표값을 기억해 다른 사진에다가 좌표값을 씌워서 크롭된 얼굴을 덮어씌워, 자연스래 합성합니다.
             img2_face_mask = np.zeros_like(img_blank)
             img2_face_mask = cv2.bitwise_not(img2_face_mask)
             
-            
-            
-
             center_face2 = (int((box[0] + box[2]) / 2), int((box[1] + box[3]) / 2))
            
-            
             seamlessclone = cv2.seamlessClone(img_blank, orig_image, img2_face_mask, center_face2, cv2.NORMAL_CLONE)
             # cv2.imshow('',seamlessclone)
-            cv2.imwrite(path_save + file[:-4] + "_" +
-                        str(num2 + 1) + ".png", seamlessclone)
-            cv2.waitKey()
-            
+            path_final = "images/BestShot/"
+            cv2.imwrite(path_final + file[:-4] + "_" +
+                        str(num2 + 1) + "AI_BestShotMake.jpg", seamlessclone)
     print(sum)
 
 
