@@ -63,6 +63,7 @@ def main():
         c_faces = []
         img_path = os.path.join(path_read, file)
         orig_image = cv2.imread(img_path)
+        cv2.imshow('or',orig_image)
         if orig_image is None:
             continue
         image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
@@ -101,7 +102,29 @@ def main():
             cv2.imwrite(path_save + file[:-4] + "_" +
                         str(num2 + 1) + ".jpg", img_blank)
 
+            # Reconstructing destination face
+            
+            height, width, channels = orig_image.shape
+            orig_black = np.zeros((height, width, channels), np.uint8)
+            # img_blank = np.zeros((height+14*h_2, width+8*w_2, 3), np.uint8)
+            # newarea = orig_image[int(box[1]):int(box[1])+height,int(box[0]):int(box[0])+width]
+            # blackarea = orig_black[int(box[1]):int(box[1])+height,int(box[0]):int(box[0])+width]
+            # gr = cv2.cvtColor(img_blank, cv2.COLOR_BGR2GRAY)
+            img2_face_mask = np.zeros_like(img_blank)
+            img2_face_mask = cv2.bitwise_not(img2_face_mask)
+            
+            
+            
+
+            center_face2 = (int((box[0] + box[2]) / 2), int((box[1] + box[3]) / 2))
            
+            
+            seamlessclone = cv2.seamlessClone(img_blank, orig_image, img2_face_mask, center_face2, cv2.NORMAL_CLONE)
+            # cv2.imshow('',seamlessclone)
+            cv2.imwrite(path_save + file[:-4] + "_" +
+                        str(num2 + 1) + ".png", seamlessclone)
+            cv2.waitKey()
+            
     print(sum)
 
 
