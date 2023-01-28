@@ -1,5 +1,8 @@
 ## Front-end
 
+firebase 서버키 숨겨놔서 이거 다운받아도 안댐
+나중에 풀어서 다시 열게요
+
 Version required
 
 - react-native : 0.70.5
