@@ -102,12 +102,15 @@ def main(img_name):
     path_read = "images/PhoneGalleryImage/"
     path_save = "images/similar_images/"
 
+    postman = "images/postman_img/"
+
     # 해동 폴더내의 사진 전부 추출
     files = os.listdir(path_read)
 
     # 대표이미지 불러오기
     selected_image_name = img_name
-    image_a = Image.open(path_read+selected_image_name)
+    # image_a = Image.open(path_read+selected_image_name)
+    image_a = Image.open(postman+selected_image_name)
 
     # 대표이미지 시간 정보 불러오기
     image_a_worker = Worker(image_a)
