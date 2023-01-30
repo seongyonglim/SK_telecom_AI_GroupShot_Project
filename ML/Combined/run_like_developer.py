@@ -14,7 +14,7 @@ time.sleep(2)
 
 
 cf_names, cf_coordinates = detect_faces_masks.main()
-print("Detect the face of image ,,, wearing mask is a no problem...!!! Run The Program...")
+print("Detect the face of image ,,, wearing mask is no problem...!!! Run The Program...")
 time.sleep(2)
 print("And crop the face of image")
 
