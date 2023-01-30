@@ -8,6 +8,7 @@ import imagecompare
 import detect_faces_masks
 import combine
 import time
+import base64
 
 app = Flask(__name__) # 플라스크 api로 던질거 설정(?) 포스트 맨으로 파일 확인할 예정
 # CORS(app) # 플라스크 function을 통해서 오류를 확인한다.
@@ -38,11 +39,16 @@ def flask_to_react():
         path_read = "images/BestShot/"
         img_list = os.listdir(path_read)
         for file in img_list:
-            img_path = os.path.join(path_read, file)
+            img = os.path.join(path_read, file)
             # final_bestshot_img = cv2.imread(img_path)
+            with open(img, 'rb') as img:
+                img_encoded = base64.b64encode(img.read())
 
-        
-            return jsonify({"final_img" : img_path})
+            print(">"*100)
+            print(img_encoded)
+  
+
+            return jsonify({"final_img" : str(img_encoded)})
     # return {"similar_img" : similar_img, "final_bestshot_img" : final_bestshot_img}
     # return jsonify({"similar" : smi_gallery , "bestshot" : final_bestshot_img})
     
