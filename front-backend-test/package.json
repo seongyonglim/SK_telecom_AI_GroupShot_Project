@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-navigation/native": "^6.1.2",
+    "axios": "^1.2.6",
     "expo": "~47.0.12",
     "expo-image-picker": "~14.0.2",
     "expo-status-bar": "~1.4.2",

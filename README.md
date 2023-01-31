@@ -61,7 +61,7 @@
 이것 저것 시도해보려고 만든 복사본
 변경점
 
-- 가인이가 만든 app.py 파일 간추림, 변경
+- 가인이가 만든 app.py 파일 간추림
 
 ### front-backend-test
 
@@ -72,6 +72,23 @@ app.js 변경점
 Get Image 누르면 이미지 나옴
 
 일단 지금은 안됨
+버튼 누를때마다 기똥차게 Network request failed 뜸
+![image](https://user-images.githubusercontent.com/72803972/215819148-5478d536-8a0d-4d45-891a-bec2547dabc3.png)
+
+#### Network ERROR 뜨는 이유로 보이는 것
+
+##### 원인 의심 1
+
+POSTMAN에서 지금 body만 지정해줬는데
+마우스를 위에 올려보면 이런 메세지가 보인다.
+![image](https://user-images.githubusercontent.com/72803972/215820586-87cd8f3f-9ae7-436e-8417-fd107a032813.png)
+
+##### 원인 의심 2
+
+POSTMAN에서 HEADER에 들어가면
+connection close로 적혀있는데 이거 때문인가 모르겠음
+![image](https://user-images.githubusercontent.com/72803972/215822294-9aac7115-71ff-42da-a300-6c6dc44e03fc.png)
+![image](https://user-images.githubusercontent.com/72803972/215822348-d01fd788-bfe4-4207-94e8-9467eb53131e.png)
 
 ### front-test
 
