@@ -14,6 +14,7 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         setBase64Image(data.base64Image);
+        console.log("Base64 Image: ", data.base64Image);
       })
       .catch((error) => {
         console.log("Error: ", error);
