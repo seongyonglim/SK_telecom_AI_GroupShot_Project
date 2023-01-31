@@ -7,14 +7,11 @@ const App = () => {
   useEffect(() => {
     fetch("http://172.30.1.16:19000/user_img", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
     })
-      .then((response) => response.json())
+      .then((response) => response.text())
       .then((data) => {
-        setBase64Image(data.base64Image);
-        console.log("Base64 Image: ", data.base64Image);
+        console.log("Base64 Image: ", data);
+        setBase64Image(data);
       })
       .catch((error) => {
         console.log("Error: ", error);
