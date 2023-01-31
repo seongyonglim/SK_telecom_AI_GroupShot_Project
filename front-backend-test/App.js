@@ -5,13 +5,16 @@ const App = () => {
   const [base64Image, setBase64Image] = useState(null);
 
   useEffect(() => {
-    fetch("http://172.30.1.16:19000/user_img", {
+    fetch("http://172.30.1.16:5000/user_img", {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-      .then((response) => response.text())
+      .then((response) => console.log(response))
       .then((data) => {
-        console.log("Base64 Image: ", data);
-        setBase64Image(data);
+        console.log("Base64 Image: ", data.base64Image);
+        setBase64Image(data.base64Image);
       })
       .catch((error) => {
         console.log("Error: ", error);
