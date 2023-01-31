@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from werkzeug.utils import secure_filename
 # from flask_cors import CORS
 import cv2
@@ -29,7 +29,7 @@ def flask_to_react():
     img_list = os.listdir(path_postman) # 저장된 postman 폴더안의 이미지를 불러온다
     
     time.sleep(2)
-
+    
     for img in img_list:
 
         imagecompare.main(img) # postman에서 불러온 이미지를 imagecompare 돌림. imagecompare 파일에 select $PATH 변경했으니 확인.
@@ -40,19 +40,29 @@ def flask_to_react():
         img_list = os.listdir(path_read)
         for file in img_list:
             img = os.path.join(path_read, file)
+
+            # with open("path/to/image.jpg", "rb") as img:
+            #     encoded_string = base64.b64encode(img.read()).decode("utf-8")
+            #     return encoded_string
             # final_bestshot_img = cv2.imread(img_path)
             with open(img, 'rb') as img:
                 img_encoded = base64.b64encode(img.read())
 
             print(">"*100)
             print(img_encoded)
-  
 
-            return jsonify({"final_img" : str(img_encoded)})
+            fp = open('tmp.txt','w')
+            fp.write(str(img_encoded))
+            fp.close()
+
+            # return jsonify({"final_img" : str(img_encoded)})
+            return img_encoded
+
+            # return send_file(img, mimetype='image/jpg')
     # return {"similar_img" : similar_img, "final_bestshot_img" : final_bestshot_img}
     # return jsonify({"similar" : smi_gallery , "bestshot" : final_bestshot_img})
     
     
 
 # if __name__ == "__main__":
-#     app.run(host='chlrkdls1269', port='5000', debug=True)
+#     app.run(host='SKTCamServer', port='5000', debug=True)
