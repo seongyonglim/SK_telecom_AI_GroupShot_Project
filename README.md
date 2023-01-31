@@ -46,6 +46,7 @@
 ### ImageDate
 
 - ImageDate/image_date.py
+
   - 이미지 파일에서 날짜 데이터를 추출하여 같은 날짜에 생성된 이미지를 추출합니다.
 
 - ImageDate/date_and_compare.py
@@ -53,13 +54,25 @@
 
 ---
 
-## Front-end
+## 2023-02-01
 
-Version required
+### Combined copy
 
-- nodejs
-- react-native
-- react
-  곧 추가예정임미다
+이것 저것 시도해보려고 만든 복사본
+변경점
 
-상세 버전은 package.json확인
+- 가인이가 만든 app.py 파일 간추림, 변경
+
+### front-backend-test
+
+backend 용으로 간단한 이미지 표출만 해보려고 만든 복사본 파일
+
+app.js 변경점
+버튼 만듬
+Get Image 누르면 이미지 나옴
+
+일단 지금은 안됨
+
+### front-test
+
+에이닷 UI 하나부터 쌓아가기 시작하려 만든 복사본

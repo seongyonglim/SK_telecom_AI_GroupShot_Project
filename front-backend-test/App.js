@@ -1,36 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { Image, View, Text, StyleSheet } from "react-native";
-
-import image from "./json_image/image_data.json";
+import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
 const App = () => {
-  const [base64Image, setBase64Image] = useState(null);
+  const [image, setImage] = useState(null);
 
-  useEffect(() => {
-    fetch("http://172.30.1.16:5000/user_img", {
-      method: "GET",
-      // headers: {
-      //   "Content-Type": "application/json",
-      // },
-    })
-      .then((response) => console.log(response))
-      .then((data) => {
-        console.log("Base64 Image: ", data.base64Image);
-        setBase64Image(data.base64Image);
-      })
-      .catch((error) => {
-        console.log("Error: ", error);
+  const handlePress = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/user_img", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          image: image,
+        }),
       });
-  }, []);
+      const data = await response.json();
+      console.log(data.image);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {base64Image ? (
-        <Image source={{ uri: image }} style={styles.image} />
-      ) : (
-        <View style={styles.placeholder}>
-          <Text>No Image Preview</Text>
-        </View>
+      <TouchableOpacity onPress={handlePress}>
+        <Text>Get Image</Text>
+      </TouchableOpacity>
+      {image && (
+        <Image
+          source={{ uri: `data:image/jpeg;base64,${image}` }}
+          style={styles.image}
+        />
       )}
     </View>
   );
@@ -38,19 +39,13 @@ const App = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    height: "100%",
   },
   image: {
-    width: "100%",
-    height: "100%",
-  },
-  placeholder: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: 200,
+    height: 200,
   },
 });
 
