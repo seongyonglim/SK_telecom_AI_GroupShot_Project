@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Image, View, Text, StyleSheet } from "react-native";
 
+import image from "./json_image/image_data.json";
+
 const App = () => {
   const [base64Image, setBase64Image] = useState(null);
 
   useEffect(() => {
     fetch("http://172.30.1.16:5000/user_img", {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      // headers: {
+      //   "Content-Type": "application/json",
+      // },
     })
       .then((response) => console.log(response))
       .then((data) => {
@@ -24,10 +26,7 @@ const App = () => {
   return (
     <View style={styles.container}>
       {base64Image ? (
-        <Image
-          source={{ uri: `data:image/png;base64,${base64Image}` }}
-          style={styles.image}
-        />
+        <Image source={{ uri: image }} style={styles.image} />
       ) : (
         <View style={styles.placeholder}>
           <Text>No Image Preview</Text>

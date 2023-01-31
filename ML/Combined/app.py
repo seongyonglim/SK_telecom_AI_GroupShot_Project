@@ -10,6 +10,21 @@ import combine
 import time
 import base64
 
+# from flask import Flask, request, jsonify
+# import base64
+
+# app = Flask(__name__)
+
+# @app.route('/user_img', methods=['GET'])
+# def get_user_img():
+#     with open("path/to/image.png", "rb") as image_file:
+#         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+#     return encoded_string
+
+# if __name__ == '__main__':
+#     app.run(debug=True, host='0.0.0.0', port=5000)
+
+
 app = Flask(__name__) # 플라스크 api로 던질거 설정(?) 포스트 맨으로 파일 확인할 예정
 # CORS(app) # 플라스크 function을 통해서 오류를 확인한다.
 
