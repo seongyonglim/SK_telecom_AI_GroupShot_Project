@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/ae8bcfd5-8ffc-410a-91b6-6ba9ac785c60/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/SKTCamServer",
+    "appService.deploySubpath": "."
+}

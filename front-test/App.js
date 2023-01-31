@@ -1,28 +1,54 @@
-import React, { useState, useEffect } from "react";
-import { View, Image, Text } from "react-native";
+import React, { useState } from "react";
+import { View, Button, Image, StyleSheet } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 
-const App = () => {
-  const [imageData, setImageData] = useState({});
+function MyComponent() {
+  // 이미지를 저장할 state 변수 선언
+  const [images, setImages] = useState([]);
 
-  useEffect(() => {
-    fetch("./json_image/image_data.json")
-      .then((response) => response.json())
-      .then((data) => setImageData(data))
-      .catch((error) => console.error(error));
-  }, []);
+  // 이미지 선택 함수
+  const selectImages = async () => {
+    // 이미지 피커를 열고 선택된 이미지를 result 변수에 저장
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      // 다중 선택 허용
+      allowsMultipleSelection: true,
+    });
+    // 선택이 취소되지 않았다면
+    if (!result.canceled) {
+      // state 변수에 선택된 이미지 저장
+      setImages(result.assets);
+    }
+  };
 
   return (
-    <View>
-      {imageData.image ? (
-        <Image
-          source={{ uri: `data:image/png;base64,${imageData.image}` }}
-          style={{ width: 200, height: 200 }}
-        />
-      ) : (
-        <Text>Loading...</Text>
-      )}
+    <View style={styles.container}>
+      <Button
+        title="Select Images"
+        onPress={selectImages}
+        style={styles.button}
+      />
+      {images.map((image, index) => (
+        <Image key={index} source={{ uri: image.uri }} style={styles.image} />
+      ))}
     </View>
   );
-};
+}
 
-export default App;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  button: {
+    marginTop: 20,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginTop: 20,
+  },
+});
+
+export default MyComponent;
