@@ -18,15 +18,25 @@ app = Flask(__name__) # 플라스크 api로 던질거 설정(?) 포스트 맨으
 #     # Main page
 #     return "Hello world"
 
-@app.route('/deep', methods = ['POST']) # localurl + /user_img 에서 request설정을 통해 서버에서 flask로 사진전달
+# @app.route('/', methods = ['GET'])
+# def default():
+#     return '''
+#     <View style={styles.container}>
+#       <TouchableOpacity onPress={handlePress}>
+#         <Text>Get Image</Text>
+#       </TouchableOpacity>
+#     '''
+
+@app.route('/deep', methods = ['GET', 'POST']) # localurl + /user_img 에서 request설정을 통해 서버에서 flask로 사진전달
 def flask_to_react():
 
     # data = request.get_json()
     # path_postman = "images/postman_img/"
 
     # parsed_request = request.files.get('1')
-    f = request.files['select'] # key 1값의 value
-    f.save('images/postman_img/' + secure_filename(f.filename)) # postman에서 받은 파일 폴더에 저장
+
+    # f = request.files['select'] # key 1값의 value
+    # f.save('images/postman_img/' + secure_filename(f.filename)) # postman에서 받은 파일 폴더에 저장
     
     # parsed_request.save(path_postman)
 
@@ -50,8 +60,8 @@ def flask_to_react():
             #     encoded_string = base64.b64encode(img.read()).decode("utf-8")
             #     return encoded_string
             # final_bestshot_img = cv2.imread(img_path)
-            with open(img, 'rb') as img_en:
-                img_encoded = base64.b64encode(img_en.read())
+            # with open(img, 'rb') as img_en:
+            #     img_encoded = base64.b64encode(img_en.read())
 
             # print(">"*100)
             # print(img_encoded)
@@ -70,4 +80,4 @@ def flask_to_react():
     
 
 if __name__ == "__main__":
-    app.run(host='172.30.1.24', port='19000', debug=True)
+    app.run(host='0.0.0.0', port='5000', debug=True)

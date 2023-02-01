@@ -1,22 +1,30 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import base64 from 'base-64';
+import {LogBox} from 'react-native';
+// import { writeFile } from "react-native-fs";
+// import {image_url} from "C:/AI_WORKSPACE/Git_DeepLearningPart/GG/front-backend-test";
 
-const App = () => {
-  const [image, setImage] = useState(null);
+
+LogBox.ignoreLogs([
+  "No native splash screen registered for given view controller. Call 'SplashScreen.show' for given view controller first.",
+])
+
+function App() {
+  const [image, setImage] = useState([]);
 
   const handlePress = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/user_img", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          image: image,
-        }),
-      });
-      const data = await response.json();
-      console.log(data.image);
+      const imgurl = "http://172.23.249.229:5000/deep"
+      fetch(imgurl)
+      .then(response => response.blob())
+      .then(myBlob => {
+      var urlCreator = window.URL || window.webkitURL;
+      var imageUrl = urlCreator.createObjectURL(myBlob);
+      const myImgElem = document.getElementById('my-img');
+      myImgElem.src = imageUrl
+      })
+
     } catch (error) {
       console.error(error);
     }
@@ -27,11 +35,12 @@ const App = () => {
       <TouchableOpacity onPress={handlePress}>
         <Text>Get Image</Text>
       </TouchableOpacity>
-      {image && (
+        {image && (
         <Image
-          source={{ uri: `data:image/jpeg;base64,${image}` }}
-          style={styles.image}
-        />
+        source={{url: 'http://172.23.249.229:5000/deep'}}
+        style={styles.image}
+        resizeMode="cover"
+      />
       )}
     </View>
   );
@@ -44,8 +53,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 600,
+    height: 600,
   },
 });
 
