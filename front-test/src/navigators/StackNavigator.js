@@ -1,9 +1,7 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Login from './Login';
-import AlbumPicker from './AlbumPicker';
+import Login from '../screens/Login';
+import AlbumPicker from '../screens/AlbumPicker';
 
 const Stack = createStackNavigator();
 

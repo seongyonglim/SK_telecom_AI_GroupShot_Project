@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {
   StyleSheet,
   ImageBackground,
@@ -12,6 +13,12 @@ import BG from '../../assets/splash.webp';
 const Login = ({}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const navigation = useNavigation();
+
+  const handleLogin = () => {
+    navigation.navigate('AlbumPicker');
+  };
 
   return (
     <ImageBackground source={BG} style={styles.container}>
@@ -32,7 +39,7 @@ const Login = ({}) => {
           keyboardType="email-address"
           autoCapitalize="none"
         />
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>
