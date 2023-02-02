@@ -2,6 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Login from '../screens/Login';
 import AlbumPicker from '../screens/AlbumPicker';
+import SelectBestPhoto from '../screens/SelectBestPhoto';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ const StackNavigator = () => {
         }}
       />
       <Stack.Screen name="AlbumPicker" component={AlbumPicker} />
+      <Stack.Screen name="SelectBestPhoto" component={SelectBestPhoto} />
     </Stack.Navigator>
   );
 };
