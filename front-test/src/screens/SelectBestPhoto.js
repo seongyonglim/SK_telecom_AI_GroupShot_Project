@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,39 +7,51 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
 const SelectBestPhoto = ({ route }) => {
+  const [selectedImage, setSelectedImage] = useState(null);
   const navigation = useNavigation();
-  const [selectedImages, setSelectedImages] = useState(
-    route.params.selectedImages
-  );
+  const selectedImages = route.params.selectedImages;
 
-  const confirmSelection = () => {
-    // logic to confirm selection
-    // ...
-    // navigate back to previous screen
-    navigation.goBack();
+  const handleImageSelect = (index) => {
+    setSelectedImage(index);
+  };
+
+  const confirmMainImage = () => {
+    if (selectedImage !== null) {
+      navigation.navigate('PhotoEditing', {
+        mainImage: selectedImages[selectedImage],
+      });
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <ScrollView horizontal>
-        {selectedImages.length > 0 ? (
-          selectedImages.map((selectedImage, index) => (
+        {selectedImages.map((selectedImage, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => handleImageSelect(index)}
+            style={{ opacity: selectedImage === index ? 0.5 : 1 }}
+          >
             <Image
-              key={index}
               source={selectedImage}
-              style={styles.selectedImage}
+              style={{ width: 200, height: 200, marginRight: 10 }}
             />
-          ))
-        ) : (
-          <Text>No images selected</Text>
-        )}
+            {selectedImage === index && (
+              <View style={{ position: 'absolute', top: 10, right: 10 }}>
+                <Image
+                  source={require('../../assets/btn_check_on.webp')}
+                  style={{ width: 50, height: 50 }}
+                />
+              </View>
+            )}
+          </TouchableOpacity>
+        ))}
       </ScrollView>
-      <TouchableOpacity onPress={confirmSelection} style={styles.button}>
-        <Text style={styles.buttonText}>대표 사진 확정</Text>
+      <TouchableOpacity onPress={confirmMainImage} style={styles.button}>
+        <Text>대표 사진 확정</Text>
       </TouchableOpacity>
     </View>
   );
