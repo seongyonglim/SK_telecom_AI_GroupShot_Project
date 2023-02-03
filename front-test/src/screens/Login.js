@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  input: {
+  }, 
+  input: { 
     width: '100%',
     height: 50,
     marginVertical: 10,
