@@ -43,7 +43,7 @@ const AlbumPicker = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView horizontal>
+      <ScrollView vertical>
         {selectedImages.length > 0 ? (
           selectedImages.map((selectedImage, index) => (
             <Image
@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selectedImage: {
-    width: 200,
-    height: 200,
-    marginRight: 10,
+    width: 350,
+    height: 300,
+    marginBottom: 20,
   },
   buttonsContainer: {
     flexDirection: 'row',

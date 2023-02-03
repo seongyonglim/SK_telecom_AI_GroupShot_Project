@@ -1,57 +1,55 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
   View,
   Text,
   Image,
   TouchableOpacity,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
-const SelectBestPhoto = ({ route }) => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const navigation = useNavigation();
-  const selectedImages = route.params.selectedImages;
-
-  const handleImageSelect = (index) => {
-    setSelectedImage(index);
-  };
+const SelectBestPhoto = ({ navigation, route }) => {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const { selectedImages } = route.params;
 
   const confirmMainImage = () => {
-    if (selectedImage !== null) {
-      navigation.navigate('PhotoEditing', {
-        mainImage: selectedImages[selectedImage],
-      });
+    if (selectedImageIndex === null) {
+      alert('Please select an image first.');
+      return;
     }
+
+    const mainImage = selectedImages[selectedImageIndex];
+    navigation.navigate('PhotoEditing', { mainImage });
   };
 
   return (
-    <View>
-      <ScrollView horizontal>
+    <View style={styles.container}>
+      <ScrollView vertical>
         {selectedImages.map((selectedImage, index) => (
           <TouchableOpacity
             key={index}
-            onPress={() => handleImageSelect(index)}
-            style={{ opacity: selectedImage === index ? 0.5 : 1 }}
+            onPress={() => setSelectedImageIndex(index)}
+            style={[
+              styles.selectedImageContainer,
+              selectedImageIndex === index &&
+                styles.selectedImageContainerSelected,
+            ]}
           >
-            <Image
-              source={selectedImage}
-              style={{ width: 200, height: 200, marginRight: 10 }}
-            />
-            {selectedImage === index && (
-              <View style={{ position: 'absolute', top: 10, right: 10 }}>
+            <Image source={selectedImage} style={styles.selectedImage} />
+            {selectedImageIndex === index && (
+              <View style={styles.checkBoxContainer}>
                 <Image
                   source={require('../../assets/btn_check_on.webp')}
-                  style={{ width: 50, height: 50 }}
+                  style={styles.checkBox}
                 />
               </View>
             )}
           </TouchableOpacity>
         ))}
       </ScrollView>
-      <TouchableOpacity onPress={confirmMainImage} style={styles.button}>
-        <Text>대표 사진 확정</Text>
+
+      <TouchableOpacity onPress={confirmMainImage} style={styles.confirmButton}>
+        <Text style={styles.confirmButtonText}>대표 사진 확정</Text>
       </TouchableOpacity>
     </View>
   );
@@ -63,19 +61,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  selectedImage: {
+  selectedImageContainer: {
+    borderWidth: 3,
+    borderColor: '#D9DBF1',
+    marginRight: 10,
     width: 200,
     height: 200,
-    marginRight: 10,
+    position: 'relative',
   },
-  button: {
+  selectedImageContainerSelected: {
+    opacity: 0.5,
+  },
+  selectedImage: {
+    width: '100%',
+    height: '100%',
+  },
+  checkBoxContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 5,
-    alignItems: 'center',
+  },
+  checkBox: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    opacity: 1.0,
+  },
+  confirmButton: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 5,
     marginTop: 10,
   },
-  buttonText: {
+  confirmButtonText: {
     fontSize: 16,
   },
 });
