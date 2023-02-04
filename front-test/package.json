@@ -21,7 +21,6 @@
     "expo-blur": "~11.2.0",
     "expo-crypto": "~11.0.0",
     "expo-file-system": "~14.1.0",
-    "expo-image-picker": "~13.3.1",
     "expo-media-library": "~14.2.0",
     "expo-splash-screen": "~0.16.2",
     "expo-status-bar": "~1.4.0",
@@ -29,12 +28,12 @@
     "prop-types": "^15.8.1",
     "react": "18.0.0",
     "react-native": "0.69.5",
-    "react-native-gesture-handler": "^2.9.0",
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-maps": "0.31.1",
     "react-native-safe-area-context": "^4.3.1",
     "react-native-screens": "~3.15.0",
-    "react-native-swiper": "^1.6.0"
+    "react-native-swiper": "^1.6.0",
+    "expo-image-picker": "~13.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -19,11 +19,7 @@ const SelectBestPhoto = ({ navigation, route }) => {
     }
 
     const mainImage = selectedImages[selectedImageIndex];
-    const otherImages = selectedImages.filter(
-      (_, i) => i !== selectedImageIndex
-    );
-
-    navigation.navigate('PhotoEditing', { mainImage, otherImages });
+    navigation.navigate('PhotoEditing', { mainImage });
   };
 
   return (
@@ -66,8 +62,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selectedImageContainer: {
-    width: 350,
-    height: 300,
+    borderWidth: 3,
+    borderColor: '#D9DBF1',
+    marginRight: 10,
+    width: 200,
+    height: 200,
     position: 'relative',
   },
   selectedImageContainerSelected: {
@@ -76,9 +75,6 @@ const styles = StyleSheet.create({
   selectedImage: {
     width: '100%',
     height: '100%',
-    marginBottom: 30,
-    borderWidth: 3,
-    borderColor: '#D9DBF1',
   },
   checkBoxContainer: {
     position: 'absolute',
