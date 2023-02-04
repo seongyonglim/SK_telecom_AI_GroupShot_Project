@@ -7,6 +7,7 @@ const PickerScreen = () => {
   const navigation = useNavigation();
   const stateRoutes = useNavigationState((state) => state.routes);
 
+  const maxCount = 4;
   const [selectedPhotos, setSelectedPhotos] = useState([]);
 
   const onSelect = useCallback(() => {
@@ -29,11 +30,17 @@ const PickerScreen = () => {
 
   const togglePhoto = (photo) => {
     const isSelected = isSelectedPhoto(photo);
-    setSelectedPhotos((prev) =>
-      isSelected
-        ? prev.filter((item) => item.id !== photo.id)
-        : [...prev, photo]
-    );
+    setSelectedPhotos((prev) => {
+      if (isSelected) {
+        return prev.filter((item) => item.id !== photo.id);
+      }
+
+      if (maxCount > prev?.length) {
+        return [...prev, photo];
+      }
+
+      return prev;
+    });
   };
 
 

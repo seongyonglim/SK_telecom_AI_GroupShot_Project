@@ -61,10 +61,10 @@ const SelectHome = () => {
         <Text style={styles.selectTitle}>{'편집하고 싶은 사진을\n앨범에서 선택해줘!'}</Text>
         <Image source={require('../../assets/selectadot.gif')} style={styles.selectAdot} />
       </View>
-      {/* <Text style={styles.description}>
+      <Text style={styles.description}>
         이미지는 최대 4장까지 선택 가능합니다.
-      </Text> */}
-      <View style={{ width, height: width }}>
+      </Text>
+      <View style={{ width, height: width,}}>
         {photos.length ? (
           <ImageSwiper photos={photos} />
         ) : (
@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
   selectAdot: {
     width: 200,
     height: 250,
-    marginTop: 20,
   },
 });
 
