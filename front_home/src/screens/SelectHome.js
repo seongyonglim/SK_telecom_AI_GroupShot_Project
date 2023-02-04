@@ -57,7 +57,10 @@ const SelectHome = () => {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/selectadot.gif')} style={styles.selectadot} />
+      <View style={styles.selectContainer}>
+        <Text style={styles.selectTitle}>{'편집하고 싶은 사진을\n앨범에서 선택해줘!'}</Text>
+        <Image source={require('../../assets/selectadot.gif')} style={styles.selectAdot} />
+      </View>
       {/* <Text style={styles.description}>
         이미지는 최대 4장까지 선택 가능합니다.
       </Text> */}
@@ -88,6 +91,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: WHITE,
   },
+  selectContainer:{
+    flexDirection: 'row'
+  },
   description: {
     color: GRAY.DARK,
     paddingHorizontal: 20,
@@ -100,11 +106,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: GRAY.LIGHT,
   },
-  selectadot: {
-    width: '100%',
+  selectTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginLeft: 20,
+    textAlignVertical: 'center'
+  },
+  selectAdot: {
+    width: 200,
     height: 250,
     marginTop: 20,
-    marginBottom: -20,
   },
 });
 

@@ -48,7 +48,7 @@ const StackNavigator = () => {
       <Stack.Screen
         name="SelectHome"
         component={SelectHome}
-        options={{ title: 'SelectHome' }}
+        options={{ title: '' }}
       />
       <Stack.Screen
       name="PickerScreen"
