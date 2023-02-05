@@ -1,6 +1,7 @@
 import { useNavigation, useNavigationState  } from '@react-navigation/native';
 import { useCallback, useLayoutEffect, useState,} from 'react';
 import ImagePicker from '../components/ImagePicker';
+import HeaderRight from '../components/HeaderRight';
 
 const PickerScreen = () => {
 
@@ -15,12 +16,11 @@ const PickerScreen = () => {
     navigation.navigate(prevScreenName, { selectedPhotos });
   }, [navigation, selectedPhotos, stateRoutes]);
 
-
   useLayoutEffect(() => {
     navigation.setOptions({
-      // headerRight: () => (
-      //   <HeaderRight disabled={selectedPhotos.length < 1} onPress={onSelect} />
-      // ),
+      headerRight: () => (
+        <HeaderRight disabled={selectedPhotos.length < 1} onPress={onSelect} />
+      ),
     });
   }, [navigation, onSelect, selectedPhotos.length]);
 

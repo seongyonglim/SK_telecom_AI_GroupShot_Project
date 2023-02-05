@@ -38,9 +38,8 @@ ImageSwiper.propTypes = {
 
 const styles = StyleSheet.create({
   photo: {
-    width: '10%',
+    width: '100%',
     height: '100%',
-    margin:100,
   },
   dot: {
     backgroundColor: BLACK,

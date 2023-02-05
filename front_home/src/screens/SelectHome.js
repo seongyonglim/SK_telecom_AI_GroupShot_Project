@@ -7,6 +7,7 @@ import { getLocalUri } from '../components/ImagePicker';
 import ImageSwiper from '../components/ImageSwiper';
 import PickerScreen from './PickerScreen';
 
+
 const SelectHome = () => {
   const navigation = useNavigation();
   const { params } = useRoute();
@@ -22,6 +23,7 @@ const SelectHome = () => {
       setPhotos(params.selectedPhotos ?? []);
     }
   }, [params]);
+  console.log(photos);
 
   useEffect(() => {
     setDisabled(isLoading || !photos.length);
@@ -48,12 +50,6 @@ const SelectHome = () => {
       }
     }
   }, [disabled, photos, navigation]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-    //   headerRight: () => <HeaderRight disabled={disabled} onPress={onSubmit} />,
-    });
-  }, [navigation, disabled, onSubmit]);
 
   return (
     <View style={styles.container}>
