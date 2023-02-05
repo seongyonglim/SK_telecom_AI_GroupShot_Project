@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import BG from '../../assets/splash.webp';
+import { PRIMARY } from '../colors';
 
 const Login = ({}) => {
   const [username, setUsername] = useState('');
@@ -55,10 +56,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rectangleContainer: {
-    width: '80%',
-    height: '35%',
+    width: 300,
+    height: 230,
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -70,23 +71,24 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 10,
   }, 
   input: { 
     width: '100%',
     height: 50,
-    marginVertical: 10,
-    paddingHorizontal: 10,
+    marginVertical: 5,
+    paddingHorizontal: 15,
     borderRadius: 5,
     backgroundColor: '#f2f2f2',
   },
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: 'blue',
+    backgroundColor: PRIMARY.DEFAULT,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
-    marginTop: 20,
+    marginTop: 10,
   },
   buttonText: {
     color: 'white',
