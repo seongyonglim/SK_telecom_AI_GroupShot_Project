@@ -7,14 +7,15 @@ const PickerScreen = () => {
 
   const navigation = useNavigation();
   const stateRoutes = useNavigationState((state) => state.routes);
-
+  
   const maxCount = 4;
   const [selectedPhotos, setSelectedPhotos] = useState([]);
 
   const onSelect = useCallback(() => {
-    const prevScreenName = stateRoutes[stateRoutes.length - 1].name;
+    const prevScreenName = stateRoutes[stateRoutes.length - 2].name;
     navigation.navigate(prevScreenName, { selectedPhotos });
   }, [navigation, selectedPhotos, stateRoutes]);
+
 
   useLayoutEffect(() => {
     navigation.setOptions({

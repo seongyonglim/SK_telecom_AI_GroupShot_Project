@@ -2,11 +2,10 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { StyleSheet, Text, View, useWindowDimensions, Pressable, Alert, Platform, Image} from 'react-native';
 import { GRAY, WHITE } from '../colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState, useLayoutEffect, useCallback } from 'react';
+import { useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import { getLocalUri } from '../components/ImagePicker';
 import ImageSwiper from '../components/ImageSwiper';
 import PickerScreen from './PickerScreen';
-
 
 const SelectHome = () => {
   const navigation = useNavigation();
@@ -23,7 +22,6 @@ const SelectHome = () => {
       setPhotos(params.selectedPhotos ?? []);
     }
   }, [params]);
-  console.log(photos);
 
   useEffect(() => {
     setDisabled(isLoading || !photos.length);

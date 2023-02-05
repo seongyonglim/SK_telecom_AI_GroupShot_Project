@@ -5,7 +5,7 @@ import { GRAY, PRIMARY } from '../colors';
 
 const HeaderRight = ({ disabled, onPress }) => {
   return (
-    <Pressable hitSlop={10} disabled={disabled} onPress={onPress}>
+    <Pressable hitSlop={20} disabled={disabled} onPress={onPress}>
       <MaterialCommunityIcons
         name="check"
         size={24}

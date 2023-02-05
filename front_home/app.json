@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "rn-photo",
-    "slug": "rn-photo",
+    "name": "photodot",
+    "slug": "photodot",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -26,7 +26,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F97316"
       },
-      "permissions": ["READ_EXTERNAL_STORAGE"]
+      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+
     },
     "web": {
       "favicon": "./assets/favicon.png"
