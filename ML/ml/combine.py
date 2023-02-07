@@ -5,7 +5,7 @@ import os
 
 path_faces = "images/faces_separated/"
 path_target = "images/main_img/"
-path_final = "images/BestShot/"
+path_final = "images/result_img/"
 
 
 def main(cf_names, cf_coordinates, dst_name, src_name):
@@ -25,4 +25,4 @@ def main(cf_names, cf_coordinates, dst_name, src_name):
     seamlessclone = cv2.seamlessClone(
         src_image, dst_image, img2_face_mask, center_face, cv2.NORMAL_CLONE)
     # cv2.imshow('',seamlessclone)
-    cv2.imwrite(path_final + "AI_BestShotMake.jpg", seamlessclone)
+    cv2.imwrite(path_final + "result.jpg", seamlessclone)

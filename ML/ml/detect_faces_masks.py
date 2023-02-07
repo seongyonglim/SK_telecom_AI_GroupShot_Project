@@ -79,7 +79,7 @@ def main():
             c_faces.append([int(box[0]), int(box[1]),
                            int(box[2]), int(box[3])])
 
-        print(f"{file}: Found {len(probs)} faces.")
+        # print(f"{file}: Found {len(probs)} faces.")
 
         c_faces = sorted(c_faces, key=lambda x: x[0])
 
@@ -103,14 +103,15 @@ def main():
 
             # 이미지 저장
             cropped_face_name = file[:-4] + "_" + str(num2 + 1) + ".jpg"
-            print("Save into:", path_save + cropped_face_name)
+            # print("Save into:", path_save + cropped_face_name)
             cv2.imwrite(path_save + cropped_face_name, img_blank)
 
             cropped_face_names.append(cropped_face_name)
             cropped_face_coordinates.append(
                 [face[0] - 17 * w_2, face[1] - 20 * h_2])
 
-    print(sum)
+    # print(sum)
+    print('\nFace crop completed')
     return cropped_face_names, cropped_face_coordinates
 
 
