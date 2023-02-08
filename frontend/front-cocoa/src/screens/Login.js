@@ -10,7 +10,11 @@ import {
 } from 'react-native';
 import BG from '../../assets/splash.webp';
 import { PRIMARY } from '../colors';
+import { LogBox } from 'react-native';
 
+LogBox.ignoreLogs([
+  "[Reanimated] Couldn't determine the version of the native part of Reanimated.",
+]);
 const Login = ({}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -49,7 +53,7 @@ const Login = ({}) => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
@@ -72,8 +76,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
-  }, 
-  input: { 
+  },
+  input: {
     width: '100%',
     height: 50,
     marginVertical: 5,

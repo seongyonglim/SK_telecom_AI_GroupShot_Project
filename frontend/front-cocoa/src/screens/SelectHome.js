@@ -9,6 +9,7 @@ import {
   Platform,
   Image,
   Button,
+  TouchableOpacity,
 } from 'react-native';
 import { GRAY, WHITE } from '../colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -19,19 +20,17 @@ import PickerScreen from './PickerScreen';
 import { RNS3 } from 'react-native-s3-upload';
 import { LogBox } from 'react-native';
 
-// 맨날 뜨는 빡치는 오류 무시
 LogBox.ignoreLogs([
   "No native splash screen registered for given view controller. Call 'SplashScreen.show' for given view controller first.",
   'Possible Unhandled Promise Rejection',
 ]);
 
-// S3 업로드 옵션 지정
 const options = {
   keyPrefix: 'uploads/',
-  bucket: 'sktcroppedimage',
-  region: 'ap-northeast-1',
-  accessKey: 'AKIAZT5SCY34VBXE3YEU',
-  secretKey: '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',
+  bucket: 'bestshot',
+  region: 'ap-northeast-2',
+  accessKey: '이것도 비밀^^',
+  secretKey: '비밀 ^^',
   successActionStatus: 201,
 };
 
@@ -45,11 +44,9 @@ const SelectHome = () => {
   const [disabled, setDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  // 선택된 사진을 S3에 업로드 하는 함수
   const uploadToS3 = () => {
     for (let cnt = 0; cnt <= photos.length; cnt++) {
       if (photos[cnt] != null) {
-        // 업로드할 파일 정보 생성
         const file = {
           uri: photos[cnt].uri,
           name: photos[cnt].filename,
@@ -60,7 +57,7 @@ const SelectHome = () => {
           if (photos.status !== 201)
             throw new Error('Failed to upload image to S3');
           console.log(photos.body);
-          console.log(cnt + '번 사진 저장 갑니당');
+          console.log(cnt + 1 + '번 사진 저장 갑니당');
         });
       }
     }
@@ -110,10 +107,10 @@ const SelectHome = () => {
         />
       </View>
       <Text style={styles.description}>유사한 이미지들을 선택하세요.</Text>
-      <View style={{ width, height: width }}>
+      <View>
         {photos.length ? (
-          <View>
-            <ImageSwiper photos={photos} />
+          <View style={{ width, height: width }}>
+            <ImageSwiper photos={photos} currentIndex={currentIndex} />
             <Button title="return" onPress={uploadToS3}>
               title
             </Button>
@@ -150,7 +147,7 @@ const styles = StyleSheet.create({
   },
   photoButton: {
     width: '100%',
-    height: '100%',
+    height: '80%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: GRAY.LIGHT,
