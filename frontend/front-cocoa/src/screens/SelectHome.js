@@ -13,26 +13,24 @@ import {
 } from 'react-native';
 import { GRAY, WHITE } from '../colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState, useCallback, useLayoutEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getLocalUri } from '../components/ImagePicker';
-import ImageSwiper from '../components/ImageSwiper';
 import PickerScreen from './PickerScreen';
 import { RNS3 } from 'react-native-s3-upload';
 import { LogBox } from 'react-native';
+
+import Swiper from 'react-native-swiper';
+import { BlurView } from 'expo-blur';
+import { BLACK, PRIMARY } from '../colors';
+import FastImage from '../components/FastImage';
 
 LogBox.ignoreLogs([
   "No native splash screen registered for given view controller. Call 'SplashScreen.show' for given view controller first.",
   'Possible Unhandled Promise Rejection',
 ]);
+///////// 이 사이에 main, select option을 넣으세요.
 
-const options = {
-  keyPrefix: 'uploads/',
-  bucket: 'bestshot',
-  region: 'ap-northeast-2',
-  accessKey: '이것도 비밀^^',
-  secretKey: '비밀 ^^',
-  successActionStatus: 201,
-};
+/////////
 
 const SelectHome = () => {
   const navigation = useNavigation();
@@ -43,26 +41,47 @@ const SelectHome = () => {
   const [photos, setPhotos] = useState([]);
   const [disabled, setDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const mainImage = photos[currentIndex];
 
   const uploadToS3 = () => {
     for (let cnt = 0; cnt <= photos.length; cnt++) {
       if (photos[cnt] != null) {
-        const file = {
+        const main_file = {
+          uri: mainImage.uri,
+          name: mainImage.filename,
+          type: 'image/jpg',
+        };
+
+        const selected_file = {
           uri: photos[cnt].uri,
           name: photos[cnt].filename,
           type: 'image/jpg',
         };
-
-        RNS3.put(file, options).then((photos) => {
-          if (photos.status !== 201)
-            throw new Error('Failed to upload image to S3');
-          console.log(photos.body);
-          console.log(cnt + 1 + '번 사진 저장 갑니당');
-        });
+        RNS3.put(main_file, main_options)
+          .then((response) => {
+            if (response.status !== 201)
+              throw new Error('Failed to upload image to S3');
+            console.log(main_file.name);
+            console.log('성공적으로 main 업로드 되셨어요!');
+          })
+          .catch((err) =>
+            console.error('not uploaded: ', main_file, main_options, err)
+          );
+        RNS3.put(selected_file, selected_options)
+          .then((result) => {
+            if (result.status !== 201)
+              throw new Error('Failed to upload image to S3');
+            console.log(selected_file.name);
+            console.log(
+              '이번엔 selected에 ' + (cnt + 1) + '번째 사진 넣기' + '성공!'
+            );
+          })
+          .catch((err) => console.error('not uploaded: ', file, options, err));
       }
     }
   };
-
   useEffect(() => {
     if (params) {
       setPhotos(params.selectedPhotos ?? []);
@@ -110,7 +129,53 @@ const SelectHome = () => {
       <View>
         {photos.length ? (
           <View style={{ width, height: width }}>
-            <ImageSwiper photos={photos} currentIndex={currentIndex} />
+            {/* ImageSwiper 때려박음 */}
+            <Swiper
+              loop={false}
+              dot={<View style={styles.dot} />}
+              activeDot={<View style={styles.activeDot} />}
+            >
+              {photos.map((photo, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  style={[
+                    styles.photo,
+                    currentIndex === idx && styles.photoSelected,
+                  ]}
+                  onPress={() => (
+                    setCurrentIndex(idx),
+                    console.log(
+                      currentIndex +
+                        1 +
+                        '번째 사진을 클릭하고 있는거야 근데 다음 사진으로 넘어가서 누르면 한박자가 늦으니까 한번 더 눌러보아요'
+                    )
+                  )}
+                >
+                  <FastImage
+                    source={{ uri: photo.uri ?? photo }}
+                    style={StyleSheet.absoluteFill}
+                    resizeMode="cover"
+                  />
+                  <BlurView
+                    intensity={Platform.select({ ios: 10, android: 100 })}
+                  >
+                    <FastImage
+                      source={{ uri: photo.uri ?? photo }}
+                      style={styles.photo}
+                      resizeMode="contain"
+                    />
+                  </BlurView>
+                  {currentIndex === idx && (
+                    <View style={styles.checkBoxContainer}>
+                      <Image
+                        source={require('../../assets/btn_check_on.webp')}
+                        style={styles.checkBox}
+                      />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </Swiper>
             <Button title="return" onPress={uploadToS3}>
               title
             </Button>
@@ -162,6 +227,47 @@ const styles = StyleSheet.create({
   selectAdot: {
     width: 200,
     height: 250,
+  },
+  checkBoxContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 5,
+  },
+  checkBox: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    opacity: 1.0,
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
+  },
+  photoSelected: {
+    opacity: 0.8,
+  },
+  dot: {
+    backgroundColor: BLACK,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginLeft: 3,
+    marginRight: 3,
+    marginTop: 3,
+    marginBottom: 3,
+  },
+  activeDot: {
+    backgroundColor: PRIMARY.DEFAULT,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginLeft: 3,
+    marginRight: 3,
+    marginTop: 3,
+    marginBottom: 3,
   },
 });
 

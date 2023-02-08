@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { BlurView } from 'expo-blur';
 import { BLACK, PRIMARY } from '../colors';
@@ -13,7 +13,7 @@ const ImageSwiper = ({ photos }) => {
       activeDot={<View style={styles.activeDot} />}
     >
       {photos.map((photo, idx) => (
-        <View key={idx} style={styles.photo}>
+        <TouchableOpacity key={idx} style={styles.photo}>
           <FastImage
             source={{ uri: photo.uri ?? photo }}
             style={StyleSheet.absoluteFill}
@@ -26,7 +26,7 @@ const ImageSwiper = ({ photos }) => {
               resizeMode="contain"
             />
           </BlurView>
-        </View>
+        </TouchableOpacity>
       ))}
     </Swiper>
   );
