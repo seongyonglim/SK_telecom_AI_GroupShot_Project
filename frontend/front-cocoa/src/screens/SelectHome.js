@@ -38,13 +38,15 @@ const SelectHome = () => {
 
   const width = useWindowDimensions().width;
 
-  const [photos, setPhotos] = useState([]);
+  const [photos, setPhotos] = useState([]); // PickerScreen에서 골라온 사진 변수 지정
   const [disabled, setDisabled] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false); // 로딩 유무 변수 지정
+  const [currentIndex, setCurrentIndex] = useState(0); // 선택한 사진(메인 사진) 인덱스 변수 지정
 
-  const mainImage = photos[currentIndex];
+  const mainImage = photos[currentIndex]; // 골라온 사진 중에서 선택한 사진을 메인 사진으로 변수 지정
 
+  // aws s3로 업로드하는 함수
+  // 이 부분 파일 분리 하고 싶음
   const uploadToS3 = () => {
     for (let cnt = 0; cnt <= photos.length; cnt++) {
       if (photos[cnt] != null) {
@@ -82,6 +84,7 @@ const SelectHome = () => {
       }
     }
   };
+
   useEffect(() => {
     if (params) {
       setPhotos(params.selectedPhotos ?? []);
@@ -92,6 +95,7 @@ const SelectHome = () => {
     setDisabled(isLoading || !photos.length);
   }, [isLoading, photos.length]);
 
+  // 지금은 안 쓰는 함수긴 한데 나중에 프앤 작업 때 유진누나 쓰실 수도
   const onSubmit = useCallback(async () => {
     if (!disabled) {
       setIsLoading(true);
@@ -127,9 +131,10 @@ const SelectHome = () => {
       </View>
       <Text style={styles.description}>유사한 이미지들을 선택하세요.</Text>
       <View>
+        {/* 사진을 고른 뒤에는 ImageSwiper를 표출해줍니다. */}
         {photos.length ? (
           <View style={{ width, height: width }}>
-            {/* ImageSwiper 때려박음 */}
+            {/* ImageSwiper */}
             <Swiper
               loop={false}
               dot={<View style={styles.dot} />}
@@ -165,6 +170,7 @@ const SelectHome = () => {
                       resizeMode="contain"
                     />
                   </BlurView>
+                  {/* 선택한 것만 체크박스 처리하는 부분 */}
                   {currentIndex === idx && (
                     <View style={styles.checkBoxContainer}>
                       <Image
@@ -176,11 +182,17 @@ const SelectHome = () => {
                 </TouchableOpacity>
               ))}
             </Swiper>
+            {/* 버튼을 누르면 AWS S3 업로드 함
+            ++ 다음 페이지로 navigate 되야함.
+            ++ 로딩시간동안 지루하지 않게 로딩화면을 따로 띄워줘야 함 */}
             <Button title="return" onPress={uploadToS3}>
               title
             </Button>
+            {/* ImageSwiper*/}
           </View>
         ) : (
+          // 근데 사진을 안골랐으면 버튼을 보여줘요
+          // 이 부분 Adot 따서 Adot 처럼 고쳐주기
           <Pressable
             style={styles.photoButton}
             onPress={() => navigation.navigate(PickerScreen, { maxCount: 10 })}
