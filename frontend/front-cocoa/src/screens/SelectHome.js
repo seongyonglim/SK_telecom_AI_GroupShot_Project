@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, NavigationContainer} from '@react-navigation/native';
 import {
   StyleSheet,
   Text,
@@ -16,6 +16,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState, useCallback } from 'react';
 import { getLocalUri } from '../components/ImagePicker';
 import PickerScreen from './PickerScreen';
+import PythonTestScreen from './PythonTestScreen';
 import { RNS3 } from 'react-native-s3-upload';
 import { LogBox } from 'react-native';
 
@@ -23,16 +24,34 @@ import Swiper from 'react-native-swiper';
 import { BlurView } from 'expo-blur';
 import { BLACK, PRIMARY } from '../colors';
 import FastImage from '../components/FastImage';
+import axios from 'axios';
 
 LogBox.ignoreLogs([
   "No native splash screen registered for given view controller. Call 'SplashScreen.show' for given view controller first.",
   'Possible Unhandled Promise Rejection',
 ]);
 ///////// 이 사이에 main, select option을 넣으세요.
+const main_options = {
+  keyPrefix: 'main_img/',
+  bucket: 'wouldubucket',
+  region: 'ap-northeast-1',
+  accessKey: 'AKIAUVZAWXXXCDVMAMMJ',
+  secretKey: '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',
+  successActionStatus: 201,
+};
 
+const selected_options = {
+  keyPrefix: 'selected_imgs/',
+  bucket: 'wouldubucket',
+  region: 'ap-northeast-1',
+  accessKey: 'AKIAUVZAWXXXCDVMAMMJ',
+  secretKey: '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',
+  successActionStatus: 201,
+};
 /////////
 
 const SelectHome = () => {
+  var url = 'http://172.23.254.165:5000/'
   const navigation = useNavigation();
   const { params } = useRoute();
 
@@ -47,42 +66,37 @@ const SelectHome = () => {
 
   // aws s3로 업로드하는 함수
   // 이 부분 파일 분리 하고 싶음
-  const uploadToS3 = () => {
+  const uploadToS3 = async () => {
+    const main_file = {
+      uri: mainImage.uri,
+      name: mainImage.filename,
+      type: 'image/jpg',
+    };
+    RNS3.put(main_file, main_options)
+      .then((response) => {
+        if (response.status !== 201)
+          throw new Error('Failed to upload image to S3');
+        console.log('대표사진:', main_file.name);
+      }).catch((err) => console.error('not uploaded: ', err));
+
     for (let cnt = 0; cnt <= photos.length; cnt++) {
       if (photos[cnt] != null) {
-        const main_file = {
-          uri: mainImage.uri,
-          name: mainImage.filename,
-          type: 'image/jpg',
-        };
-
         const selected_file = {
           uri: photos[cnt].uri,
           name: photos[cnt].filename,
           type: 'image/jpg',
         };
-        RNS3.put(main_file, main_options)
-          .then((response) => {
-            if (response.status !== 201)
-              throw new Error('Failed to upload image to S3');
-            console.log(main_file.name);
-            console.log('성공적으로 main 업로드 되셨어요!');
-          })
-          .catch((err) =>
-            console.error('not uploaded: ', main_file, main_options, err)
-          );
         RNS3.put(selected_file, selected_options)
           .then((result) => {
             if (result.status !== 201)
               throw new Error('Failed to upload image to S3');
             console.log(selected_file.name);
-            console.log(
-              '이번엔 selected에 ' + (cnt + 1) + '번째 사진 넣기' + '성공!'
-            );
-          })
-          .catch((err) => console.error('not uploaded: ', file, options, err));
+          }).catch((err) => console.error('not uploaded: ', err));
       }
     }
+    console.log('업로드');
+    await axios.get(url+'/crop_face');
+    navigation.navigate(PythonTestScreen);
   };
 
   useEffect(() => {
@@ -94,29 +108,6 @@ const SelectHome = () => {
   useEffect(() => {
     setDisabled(isLoading || !photos.length);
   }, [isLoading, photos.length]);
-
-  // 지금은 안 쓰는 함수긴 한데 나중에 프앤 작업 때 유진누나 쓰실 수도
-  const onSubmit = useCallback(async () => {
-    if (!disabled) {
-      setIsLoading(true);
-      try {
-        const localUris = await Promise.all(
-          photos.map((photo) =>
-            Platform.select({
-              ios: getLocalUri(photo.id),
-              android: photo.uri,
-            })
-          )
-        );
-        navigation.replace(PickerScreen.WRITE_TEXT, {
-          photoUris: localUris,
-        });
-      } catch (e) {
-        Alert.alert('사진 정보 조회 실패', e.message);
-        setIsLoading(false);
-      }
-    }
-  }, [disabled, photos, navigation]);
 
   return (
     <View style={styles.container}>
@@ -140,6 +131,7 @@ const SelectHome = () => {
               dot={<View style={styles.dot} />}
               activeDot={<View style={styles.activeDot} />}
             >
+              {/* 대표사진 선택기능 */}
               {photos.map((photo, idx) => (
                 <TouchableOpacity
                   key={idx}
@@ -148,12 +140,7 @@ const SelectHome = () => {
                     currentIndex === idx && styles.photoSelected,
                   ]}
                   onPress={() => (
-                    setCurrentIndex(idx),
-                    console.log(
-                      currentIndex +
-                        1 +
-                        '번째 사진을 클릭하고 있는거야 근데 다음 사진으로 넘어가서 누르면 한박자가 늦으니까 한번 더 눌러보아요'
-                    )
+                    setCurrentIndex(idx)
                   )}
                 >
                   <FastImage
@@ -185,8 +172,7 @@ const SelectHome = () => {
             {/* 버튼을 누르면 AWS S3 업로드 함
             ++ 다음 페이지로 navigate 되야함.
             ++ 로딩시간동안 지루하지 않게 로딩화면을 따로 띄워줘야 함 */}
-            <Button title="return" onPress={uploadToS3}>
-              title
+            <Button title="대표사진확정" onPress={uploadToS3}>
             </Button>
             {/* ImageSwiper*/}
           </View>

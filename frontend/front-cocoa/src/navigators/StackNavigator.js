@@ -2,6 +2,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from '../screens/Login';
 import PickerScreen from '../screens/PickerScreen';
 import SelectHome from '../screens/SelectHome';
+import PythonTestScreen from '../screens/PythonTestScreen';
+import CropLoadingScreen from '../screens/CropLoadingScreen';
 //import { initFirebase } from '../api/firebase';
 import { useEffect, useState } from 'react';
 import { Asset } from 'expo-asset';
@@ -16,7 +18,7 @@ const ImageAssets = [
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
-  const [isReady, setIsReady] = useState(false);
+  const [setIsReady] = useState(false);
   useEffect(() => {
     (async () => {
       try {
@@ -51,6 +53,16 @@ const StackNavigator = () => {
       <Stack.Screen
       name="PickerScreen"
       component={PickerScreen}
+      options={{ title: '' }}
+      />
+      <Stack.Screen
+      name="CropLoadingScreen"
+      component={CropLoadingScreen}
+      options={{ title: '' }}
+      />
+      <Stack.Screen
+      name="PythonTestScreen"
+      component={PythonTestScreen}
       options={{ title: '' }}
       />
     </Stack.Navigator>

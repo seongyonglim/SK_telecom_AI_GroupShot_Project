@@ -2,7 +2,6 @@ import glob
 import os
 import detect_faces_masks
 import combine
-import boto3
 from cloudpathlib import CloudPath
 from flask import Flask
 from flask_cors import CORS
@@ -10,12 +9,13 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bestshot/"
+aws_path = "s3://wouldubucket/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
 path_face = "images/faces_separated/"  # 얼굴 이미지 저장 경로
 path_result = "images/result_img/"  # 결과물 이미지 저장 경로
+cf_names, cf_coordinates = [], []
 
 
 # 로컬 폴더 정리 함수
@@ -83,6 +83,10 @@ def remove_dirs():
     ri.rmtree()
     ri = CloudPath(aws_path+"result_img/")
     ri.rmtree()
+    ri = CloudPath(aws_path+"selected_imgs/")
+    ri.rmtree()
+    ri = CloudPath(aws_path+"main_img/")
+    ri.rmtree()
     print('\nRemoval Completed')
 
 
@@ -100,46 +104,43 @@ def check_uploads():
     ci.download_to(path_check+"result_img/")
 
 
-# 얼굴 추출 후 AWS로 업로드하는 함수
-def crop_faces_and_upload():
+# 얼굴 crop 하고 AWS에 저장하는 함수
+@ app.route('/crop_face', methods=['GET'])
+def crop_face():
+    global cf_names, cf_coordinates
+    init_dirs()
+    download_from_aws()
     # 불러온 사진으로부터 얼굴들만 추출하여 cf_names 에 이름들, cf_coordinates에 시작좌표들 저장
     cf_names, cf_coordinates = detect_faces_masks.main()
     upload_cropped_faces()
-
-    return cf_names, cf_coordinates
+    return "Task Done"
 
 
 # 대표이미지 합성 후 업로드
-def combine_image(cf_names, cf_coordinates):
+@ app.route('/combine_face', methods=['GET'])
+def combine_face():
     # 대표이미지 이름 저장
     main_img = os.listdir(path_main)[0]
+
     # 대체할 얼굴 이름 저장
-    selected_face = cf_names[3]
+    selected_face = cf_names[5]
 
     # 합성할 대상인 main_img에 붙여넣을 얼굴 selected_face를 자연스럽게 합성시킨다
     combine.main(cf_names, cf_coordinates, main_img, selected_face)
     print('\nFace Combine Completed')
-
     # 합성한 사진 AWS로 업로드
     upload_result_to_aws()
-
-
-@app.route('/run_model', methods=['GET'])
-def run_model():
-    init_dirs()
-    download_from_aws()
-    cf_names, cf_coordinates = crop_faces_and_upload()
-    combine_image(cf_names, cf_coordinates)
     return "Task Done"
 
 
-@app.route('/check_upload', methods=['GET'])
+# 업로드 이미지 확인용
+@ app.route('/check_upload', methods=['GET'])
 def check_uploaded_files():
     check_uploads()
     return "Task Done"
 
 
-@app.route('/cleanup_AWS', methods=['GET'])
+@ app.route('/cleanup_AWS', methods=['GET'])
 def cleanup_files():
     remove_dirs()
     return "Task Done"

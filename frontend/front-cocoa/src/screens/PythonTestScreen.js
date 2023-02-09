@@ -1,51 +1,43 @@
-import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import {
   StyleSheet,
   ImageBackground,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import BG from '../../assets/splash.webp';
 import { PRIMARY } from '../colors';
-import { LogBox } from 'react-native';
+import axios from 'axios';
 
-LogBox.ignoreLogs([
-  "[Reanimated] Couldn't determine the version of the native part of Reanimated.",
-]);
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const PythonTestScreen = () => {
+  var url = 'http://172.23.254.165:5000/'
 
-  const navigation = useNavigation();
+  {/* 파이썬 얼굴 crop + 합성 동작 버튼 */}
+  const combine_face = async () => {
+    await axios.get(url+'/combine_face');
+  };
 
-  const handleLogin = () => {
-    navigation.navigate('SelectHome');
+  {/* 파이썬에서 사진을 다운받아 확인하는 버튼 */}
+  const check_upload = async () => {
+    await axios.get(url+'check_upload');
+  };
+
+  {/* AWS 파일 정리 버튼 */}
+  const cleanup_AWS = async () => {
+    await axios.get(url+'cleanup_AWS');
   };
 
   return (
     <ImageBackground source={BG} style={styles.container}>
       <View style={styles.rectangleContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity style={styles.button} onPress={combine_face}>
+          <Text style={styles.buttonText}>얼굴 합성</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={check_upload}>
+          <Text style={styles.buttonText}>업로드 데이터 파이썬으로 확인</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={cleanup_AWS}>
+          <Text style={styles.buttonText}>AWS 비우기</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -61,7 +53,7 @@ const styles = StyleSheet.create({
   },
   rectangleContainer: {
     width: 300,
-    height: 230,
+    height: 300,
     backgroundColor: 'white',
     borderRadius: 20,
     shadowColor: '#000',
@@ -100,4 +92,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default PythonTestScreen;
