@@ -1,14 +1,14 @@
-from flask import Flask, jsonify, request, send_file
-from werkzeug.utils import secure_filename
 import glob
 import os
 import detect_faces_masks
 import combine
 import boto3
 from cloudpathlib import CloudPath
+from flask import Flask
+from flask_cors import CORS
 
-app = Flask(__name__)  # 플라스크 api로 던질거 설정(?) 포스트 맨으로 파일 확인할 예정
-# localurl + /user_img 에서 request설정을 통해 서버에서 flask로 사진전달
+app = Flask(__name__)
+CORS(app)
 
 aws_path = "s3://bestshot/"
 
@@ -20,6 +20,8 @@ path_result = "images/result_img/"  # 결과물 이미지 저장 경로
 
 # 로컬 폴더 정리 함수
 def init_dirs():
+    if not os.path.isdir("images/"):
+        os.mkdir("images/")
     # 대표이미지 폴더 신규 생성 / 폴더 비우기
     if not os.path.isdir(path_main):
         os.mkdir(path_main)
@@ -40,6 +42,13 @@ def init_dirs():
     img_list = os.listdir(path_result)
     for img in img_list:
         os.remove(path_result + img)
+
+    # 얼굴 이미지 폴더 신규 생성 / 폴더 비우기
+    if not os.path.isdir(path_face):
+        os.mkdir(path_face)
+    img_list = os.listdir(path_face)
+    for img in img_list:
+        os.remove(path_face + img)
 
 
 # AWS로부터 대표사진 및 선택된 사진들 불러오는 함수
@@ -79,10 +88,16 @@ def remove_dirs():
 
 # 업로드 사진 확인 용도로 만들어놓은 함수
 def check_uploads():
+    path_check = "images/check_downloads/"
+    if not os.path.isdir(path_check):
+        os.mkdir(path_check)
+        os.mkdir(path_check+"cropped_face_imgs/")
+        os.mkdir(path_check+"result_img/")
+
     ci = CloudPath(aws_path+"cropped_face_imgs/")
-    ci.download_to("images/check_downloads/cropped_face_imgs/")
+    ci.download_to(path_check+"cropped_face_imgs/")
     ci = CloudPath(aws_path+"result_img/")
-    ci.download_to("images/check_downloads/result_img/")
+    ci.download_to(path_check+"result_img/")
 
 
 # 얼굴 추출 후 AWS로 업로드하는 함수
@@ -109,12 +124,26 @@ def combine_image(cf_names, cf_coordinates):
     upload_result_to_aws()
 
 
-if __name__ == "__main__":
+@app.route('/run_model', methods=['GET'])
+def run_model():
     init_dirs()
     download_from_aws()
     cf_names, cf_coordinates = crop_faces_and_upload()
     combine_image(cf_names, cf_coordinates)
-    # check_uploads()
-    # remove_dirs()
+    return "Task Done"
 
-    # app.run(host='0.0.0.0', port='5000', debug=True)
+
+@app.route('/check_upload', methods=['GET'])
+def check_uploaded_files():
+    check_uploads()
+    return "Task Done"
+
+
+@app.route('/cleanup_AWS', methods=['GET'])
+def cleanup_files():
+    remove_dirs()
+    return "Task Done"
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port='5000', debug=True)

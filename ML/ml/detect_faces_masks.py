@@ -15,24 +15,7 @@ path_read = "images/selected_img/"
 path_save = "images/faces_separated/"
 
 
-# 저장 폴더가 존재하지 않을 경우 생성
-def mkdir_for_save_images():
-    if not os.path.isdir(path_save):
-        os.mkdir(path_save)
-
-
-# path_save 경로에 이미지가 이미 있을 경우 모두 삭제
-def clear_images():
-    img_list = os.listdir(path_save)
-    for img in img_list:
-        os.remove(path_save + img)
-
-
 def main():
-
-    mkdir_for_save_images()
-    clear_images()
-
     currentdir = os.path.dirname(os.path.realpath(__file__))
     parentdir = os.path.dirname(currentdir)
     sys.path.append(parentdir)
