@@ -14,7 +14,7 @@ const PythonTestScreen = () => {
 
   {/* 파이썬 얼굴 crop + 합성 동작 버튼 */}
   const combine_face = async () => {
-    await axios.get(url+'/combine_face');
+    await axios.get(url+'combine_face');
   };
 
   {/* 파이썬에서 사진을 다운받아 확인하는 버튼 */}

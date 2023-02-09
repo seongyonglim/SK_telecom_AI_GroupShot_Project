@@ -31,23 +31,7 @@ LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
 ]);
 ///////// 이 사이에 main, select option을 넣으세요.
-const main_options = {
-  keyPrefix: 'main_img/',
-  bucket: 'wouldubucket',
-  region: 'ap-northeast-1',
-  accessKey: 'AKIAUVZAWXXXCDVMAMMJ',
-  secretKey: '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',
-  successActionStatus: 201,
-};
 
-const selected_options = {
-  keyPrefix: 'selected_imgs/',
-  bucket: 'wouldubucket',
-  region: 'ap-northeast-1',
-  accessKey: 'AKIAUVZAWXXXCDVMAMMJ',
-  secretKey: '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',
-  successActionStatus: 201,
-};
 /////////
 
 const SelectHome = () => {
@@ -66,7 +50,7 @@ const SelectHome = () => {
 
   // aws s3로 업로드하는 함수
   // 이 부분 파일 분리 하고 싶음
-  const uploadToS3 = async () => {
+  async function uploadToS3(){
     const main_file = {
       uri: mainImage.uri,
       name: mainImage.filename,
@@ -78,9 +62,13 @@ const SelectHome = () => {
           throw new Error('Failed to upload image to S3');
         console.log('대표사진:', main_file.name);
       }).catch((err) => console.error('not uploaded: ', err));
+    
+    newcnt = 0
 
     for (let cnt = 0; cnt <= photos.length; cnt++) {
       if (photos[cnt] != null) {
+
+
         const selected_file = {
           uri: photos[cnt].uri,
           name: photos[cnt].filename,
@@ -91,12 +79,14 @@ const SelectHome = () => {
             if (result.status !== 201)
               throw new Error('Failed to upload image to S3');
             console.log(selected_file.name);
+            newcnt += 1
+            if(newcnt == photos.length){axios.get(url+'/crop_face'),navigation.navigate(PythonTestScreen),console.log('업로드');}
           }).catch((err) => console.error('not uploaded: ', err));
       }
+      
     }
-    console.log('업로드');
-    await axios.get(url+'/crop_face');
-    navigation.navigate(PythonTestScreen);
+   
+    // return axget = await axios.get(url+'/crop_face'), nvpy = await navigation.navigate(PythonTestScreen),  console.log('업로드');
   };
 
   useEffect(() => {
