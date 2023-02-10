@@ -3,7 +3,6 @@ import Login from '../screens/Login';
 import PickerScreen from '../screens/PickerScreen';
 import SelectHome from '../screens/SelectHome';
 import PythonTestScreen from '../screens/PythonTestScreen';
-import CropLoadingScreen from '../screens/CropLoadingScreen';
 //import { initFirebase } from '../api/firebase';
 import { useEffect, useState } from 'react';
 import { Asset } from 'expo-asset';
@@ -53,11 +52,6 @@ const StackNavigator = () => {
       <Stack.Screen
       name="PickerScreen"
       component={PickerScreen}
-      options={{ title: '' }}
-      />
-      <Stack.Screen
-      name="CropLoadingScreen"
-      component={CropLoadingScreen}
       options={{ title: '' }}
       />
       <Stack.Screen

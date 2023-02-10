@@ -9,7 +9,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bestshot/"
+aws_path = "s3://bucketwould/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로

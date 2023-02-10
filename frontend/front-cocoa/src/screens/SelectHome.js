@@ -10,6 +10,7 @@ import {
   Image,
   Button,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import { GRAY, WHITE } from '../colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -31,7 +32,23 @@ LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
 ]);
 ///////// 이 사이에 main, select option을 넣으세요.
+const main_options = {
+  keyPrefix: 'main_img/',
+  bucket: 'bucketwould',
+  region: 'ap-northeast-2',
+  accessKey: 'AKIAUVZAWXXXJO7VUCMZ',
+  secretKey: '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',
+  successActionStatus: 201,
+};
 
+const selected_options = {
+  keyPrefix: 'selected_imgs/',
+  bucket: 'bucketwould',
+  region: 'ap-northeast-2',
+  accessKey: 'AKIAUVZAWXXXJO7VUCMZ',
+  secretKey: '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',
+  successActionStatus: 201,
+};
 /////////
 
 const SelectHome = () => {
@@ -43,7 +60,9 @@ const SelectHome = () => {
 
   const [photos, setPhotos] = useState([]); // PickerScreen에서 골라온 사진 변수 지정
   const [disabled, setDisabled] = useState(true);
-  const [isLoading, setIsLoading] = useState(false); // 로딩 유무 변수 지정
+  const [isLoading, setIsLoading] = useState(false); // Device에서 사진 파일 가져오는 동안 로딩하고 있는지를 변수로 지정
+  const [isUploading, setIsUploading] = useState(false); // 이거는 S3 업로드 중일 때 로딩하고 있는지를 변수로 지정
+  const [showModal, setShowModal] = useState(false); // 로딩화면은 Modal로 깔끔히 정리
   const [currentIndex, setCurrentIndex] = useState(0); // 선택한 사진(메인 사진) 인덱스 변수 지정
 
   const mainImage = photos[currentIndex]; // 골라온 사진 중에서 선택한 사진을 메인 사진으로 변수 지정
@@ -51,6 +70,9 @@ const SelectHome = () => {
   // aws s3로 업로드하는 함수
   // 이 부분 파일 분리 하고 싶음
   async function uploadToS3(){
+    setIsUploading(true);
+    setShowModal(true);
+
     const main_file = {
       uri: mainImage.uri,
       name: mainImage.filename,
@@ -80,13 +102,29 @@ const SelectHome = () => {
               throw new Error('Failed to upload image to S3');
             console.log(selected_file.name);
             newcnt += 1
-            if(newcnt == photos.length){axios.get(url+'/crop_face'),navigation.navigate(PythonTestScreen),console.log('업로드');}
+            if(newcnt == photos.length){axios.get(url+'/crop_face'),console.log('업로드');}
           }).catch((err) => console.error('not uploaded: ', err));
       }
       
     }
    
-    // return axget = await axios.get(url+'/crop_face'), nvpy = await navigation.navigate(PythonTestScreen),  console.log('업로드');
+    // 진짜 로딩 다 끝나고 다음화면으로 넘어가라니까 죽어도 안 되길래...
+    // 그냥 강제로 3초룰 집어넣음
+    // **여기서 잠깐, 3초 룰이란?**
+    // 일단 로딩 다 끝나고 넘어가는 조건을 집어넣되, 그거랑 상관없이 무조건 로딩화면을 3초 더 보여줌
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        setIsUploading(false);
+        setShowModal(false);
+        resolve();
+      }, 15000);
+    });
+  };
+
+  const handleOnPress = async () => {
+    uploadToS3().then(() => {
+      navigation.navigate(PythonTestScreen)
+    });
   };
 
   useEffect(() => {
@@ -162,8 +200,23 @@ const SelectHome = () => {
             {/* 버튼을 누르면 AWS S3 업로드 함
             ++ 다음 페이지로 navigate 되야함.
             ++ 로딩시간동안 지루하지 않게 로딩화면을 따로 띄워줘야 함 */}
-            <Button title="대표사진확정" onPress={uploadToS3}>
+            <Button title="대표사진확정" onPress={handleOnPress} disabled={isUploading}>
             </Button>
+            {/* Modal 사용해서 강제 로딩창 실행 */}
+            <Modal visible={showModal}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={styles.loadingTitle}>
+                  서현아 보고있어?
+                </Text>
+                <Image source={require('../../assets/loadingCharacter.gif')} />
+              </View>
+            </Modal>
             {/* ImageSwiper*/}
           </View>
         ) : (
