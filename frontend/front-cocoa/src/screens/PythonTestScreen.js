@@ -15,7 +15,7 @@ import PhotoEditing from './.PhotoEditing';
 const PythonTestScreen = () => {
   const navigation = useNavigation();
 
-  var url = 'http://172.23.244.173:5000/';
+  var url = 'http://172.23.254.165:5000/';
 
   {
     /* 파이썬 얼굴 crop + 합성 동작 버튼 */

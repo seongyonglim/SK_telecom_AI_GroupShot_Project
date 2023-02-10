@@ -44,11 +44,16 @@ def main():
 
     # 합성 python 코드 때 필요한 리스트들
 
-    cropped_face_names = []  # crop 된 이미지 이름 저장 리스트
-    cropped_face_coordinates = []  # crop 된 이미지의 시작점 좌표값 저장 리스트
+    cropped_face_names_group = []  # crop 된 이미지 이름 사진단위 그룹 저장 리스트
+    cropped_face_coordinates_group = []  # crop 된 이미지의 시작점 좌표값 사진단위 그룹 저장 리스트
+    face_imgs_group = []  # crop된 얼굴 이미지 사진단위 그룹 저장 리스트
+    face_nums = []  # 얼굴 개수 저장 리스트
 
     for file in listdir:
         c_faces = []
+        face_imgs = []  # 잘라진 얼굴파일 임시로 저장하는 리스트
+        cropped_face_names = []  # crop 된 이미지 이름 저장 리스트
+        cropped_face_coordinates = []  # crop 된 이미지의 시작점 좌표값 저장 리스트
         img_path = os.path.join(path_read, file)
         orig_image = cv2.imread(img_path)
         if orig_image is None:
@@ -66,7 +71,7 @@ def main():
 
         c_faces = sorted(c_faces, key=lambda x: x[0])
 
-        for num2, face in enumerate(c_faces):
+        for face in (c_faces):
             # 사각형 사이즈 계산
             height = face[3] - face[1]
             width = face[2] - face[0]
@@ -85,14 +90,42 @@ def main():
                         img_blank[i][j] = orig_image[k][l]
 
             # 이미지 저장
-            cropped_face_name = file[:-4] + "_" + str(num2 + 1) + ".jpg"
+            face_imgs.append(img_blank)
             # print("Save into:", path_save + cropped_face_name)
-            cv2.imwrite(path_save + cropped_face_name, img_blank)
-
-            cropped_face_names.append(cropped_face_name)
             cropped_face_coordinates.append(
                 [face[0] - 17 * w_2, face[1] - 20 * h_2])
 
+        cropped_face_names_group.append(cropped_face_names)
+        cropped_face_coordinates_group.append(cropped_face_coordinates)
+        face_nums.append(len(c_faces))
+        face_imgs_group.append(face_imgs)
+
+    # 얼굴이 아닌 사진 제외 후 저장 파트
+    main_idx = face_nums.index(max(face_nums, key=face_nums.count))
+    for i in range(len(face_nums)):
+        if face_nums[i] != face_nums[main_idx]:
+            for j in range(face_nums[main_idx]):
+                xi, yi = cropped_face_coordinates_group[i][j]
+                xm, ym = cropped_face_coordinates_group[main_idx][j]
+
+                if 0.65*xm < xi < 1.35*xm and 0.65*ym < yi < 1.35*ym:
+                    continue
+
+                del cropped_face_coordinates_group[i][j]
+                del face_imgs_group[i][j]
+                j -= 1
+        if len(cropped_face_coordinates_group[i]) != face_nums[main_idx]:
+            cropped_face_coordinates_group[i] = cropped_face_coordinates_group[i][:face_nums[main_idx]]
+            face_imgs_group[i] = face_imgs_group[i][:face_nums[main_idx]]
+
+    cropped_face_coordinates = []
+    for i in range(len(face_imgs_group)):
+        for j in range(len(face_imgs_group[i])):
+            cropped_face_name = listdir[i][:-4] + "_" + str(j+1)+".jpg"
+            cv2.imwrite(path_save + cropped_face_name, face_imgs_group[i][j])
+            cropped_face_names.append(cropped_face_name)
+            cropped_face_coordinates.append(
+                cropped_face_coordinates_group[i][j])
     # print(sum)
     print('\nFace crop completed')
     return cropped_face_names, cropped_face_coordinates
