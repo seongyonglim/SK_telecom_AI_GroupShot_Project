@@ -6,6 +6,7 @@ import PythonTestScreen from '../screens/PythonTestScreen';
 //import { initFirebase } from '../api/firebase';
 import { useEffect, useState } from 'react';
 import { Asset } from 'expo-asset';
+import PhotoEditing from './../screens/PhotoEditing';
 
 const ImageAssets = [
   require('../../assets/cover.png'),
@@ -50,14 +51,19 @@ const StackNavigator = () => {
         options={{ title: '' }}
       />
       <Stack.Screen
-      name="PickerScreen"
-      component={PickerScreen}
-      options={{ title: '' }}
+        name="PickerScreen"
+        component={PickerScreen}
+        options={{ title: '' }}
       />
       <Stack.Screen
-      name="PythonTestScreen"
-      component={PythonTestScreen}
-      options={{ title: '' }}
+        name="PythonTestScreen"
+        component={PythonTestScreen}
+        options={{ title: '' }}
+      />
+      <Stack.Screen
+        name="PhotoEditing"
+        component={PhotoEditing}
+        options={{ title: '' }}
       />
     </Stack.Navigator>
   );

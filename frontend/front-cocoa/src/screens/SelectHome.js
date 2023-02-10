@@ -1,4 +1,8 @@
-import { useNavigation, useRoute, NavigationContainer} from '@react-navigation/native';
+import {
+  useNavigation,
+  useRoute,
+  NavigationContainer,
+} from '@react-navigation/native';
 import {
   StyleSheet,
   Text,
@@ -11,6 +15,7 @@ import {
   Button,
   TouchableOpacity,
   Modal,
+  LogBox,
 } from 'react-native';
 import { GRAY, WHITE } from '../colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -19,7 +24,6 @@ import { getLocalUri } from '../components/ImagePicker';
 import PickerScreen from './PickerScreen';
 import PythonTestScreen from './PythonTestScreen';
 import { RNS3 } from 'react-native-s3-upload';
-import { LogBox } from 'react-native';
 
 import Swiper from 'react-native-swiper';
 import { BlurView } from 'expo-blur';
@@ -36,8 +40,8 @@ const main_options = {
   keyPrefix: 'main_img/',
   bucket: 'bucketwould',
   region: 'ap-northeast-2',
-  accessKey: 'AKIAUVZAWXXXJO7VUCMZ',
-  secretKey: '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',
+  accessKey: 'AKIAUVZAWXXXBO7TFFFP',
+  secretKey: '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',
   successActionStatus: 201,
 };
 
@@ -45,14 +49,14 @@ const selected_options = {
   keyPrefix: 'selected_imgs/',
   bucket: 'bucketwould',
   region: 'ap-northeast-2',
-  accessKey: 'AKIAUVZAWXXXJO7VUCMZ',
-  secretKey: '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',
+  accessKey: 'AKIAUVZAWXXXBO7TFFFP',
+  secretKey: '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',
   successActionStatus: 201,
 };
 /////////
 
 const SelectHome = () => {
-  var url = 'http://172.23.254.165:5000/'
+  var url = 'http://172.23.244.173:5000/';
   const navigation = useNavigation();
   const { params } = useRoute();
 
@@ -69,7 +73,7 @@ const SelectHome = () => {
 
   // aws s3로 업로드하는 함수
   // 이 부분 파일 분리 하고 싶음
-  async function uploadToS3(){
+  async function uploadToS3() {
     setIsUploading(true);
     setShowModal(true);
 
@@ -83,14 +87,13 @@ const SelectHome = () => {
         if (response.status !== 201)
           throw new Error('Failed to upload image to S3');
         console.log('대표사진:', main_file.name);
-      }).catch((err) => console.error('not uploaded: ', err));
-    
-    newcnt = 0
+      })
+      .catch((err) => console.error('not uploaded: ', err));
+
+    newcnt = 0;
 
     for (let cnt = 0; cnt <= photos.length; cnt++) {
       if (photos[cnt] != null) {
-
-
         const selected_file = {
           uri: photos[cnt].uri,
           name: photos[cnt].filename,
@@ -101,13 +104,15 @@ const SelectHome = () => {
             if (result.status !== 201)
               throw new Error('Failed to upload image to S3');
             console.log(selected_file.name);
-            newcnt += 1
-            if(newcnt == photos.length){axios.get(url+'/crop_face'),console.log('업로드');}
-          }).catch((err) => console.error('not uploaded: ', err));
+            newcnt += 1;
+            if (newcnt == photos.length) {
+              axios.get(url + '/crop_face'), console.log('업로드');
+            }
+          })
+          .catch((err) => console.error('not uploaded: ', err));
       }
-      
     }
-   
+
     // 진짜 로딩 다 끝나고 다음화면으로 넘어가라니까 죽어도 안 되길래...
     // 그냥 강제로 3초룰 집어넣음
     // **여기서 잠깐, 3초 룰이란?**
@@ -119,11 +124,11 @@ const SelectHome = () => {
         resolve();
       }, 15000);
     });
-  };
+  }
 
   const handleOnPress = async () => {
     uploadToS3().then(() => {
-      navigation.navigate(PythonTestScreen)
+      navigation.navigate(PythonTestScreen);
     });
   };
 
@@ -167,9 +172,7 @@ const SelectHome = () => {
                     styles.photo,
                     currentIndex === idx && styles.photoSelected,
                   ]}
-                  onPress={() => (
-                    setCurrentIndex(idx)
-                  )}
+                  onPress={() => setCurrentIndex(idx)}
                 >
                   <FastImage
                     source={{ uri: photo.uri ?? photo }}
@@ -200,8 +203,11 @@ const SelectHome = () => {
             {/* 버튼을 누르면 AWS S3 업로드 함
             ++ 다음 페이지로 navigate 되야함.
             ++ 로딩시간동안 지루하지 않게 로딩화면을 따로 띄워줘야 함 */}
-            <Button title="대표사진확정" onPress={handleOnPress} disabled={isUploading}>
-            </Button>
+            <Button
+              title="대표사진확정"
+              onPress={handleOnPress}
+              disabled={isUploading}
+            ></Button>
             {/* Modal 사용해서 강제 로딩창 실행 */}
             <Modal visible={showModal}>
               <View
@@ -211,9 +217,7 @@ const SelectHome = () => {
                   alignItems: 'center',
                 }}
               >
-                <Text style={styles.loadingTitle}>
-                  서현아 보고있어?
-                </Text>
+                <Text style={styles.loadingTitle}>서현아 보고있어?</Text>
                 <Image source={require('../../assets/loadingCharacter.gif')} />
               </View>
             </Modal>
