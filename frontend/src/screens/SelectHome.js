@@ -142,7 +142,7 @@ const SelectHome = () => {
     <View style={styles.container}>
       <View style={styles.selectContainer}>
         <Text style={styles.selectTitle}>
-        {'편집하고 싶은\n사진을 촬영하거나\n앨범에서 선택해줘!'}
+          {'편집하고 싶은\n사진을 촬영하거나\n앨범에서 선택해줘!'}
         </Text>
         <Image
           source={require('../../assets/selectadot.gif')}
@@ -225,23 +225,37 @@ const SelectHome = () => {
         ) : (
           // 근데 사진을 안골랐으면 버튼을 보여줘요
           // 이 부분 Adot 따서 Adot 처럼 고쳐주기
-          <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <View style={styles.photoContainer}>
               <View>
-              <Image source={require('../../assets/takephoto.png')} style={styles.SelectImg} />
-              <Text style={styles.IconTitle}>사진 촬영하기</Text>
+                <Image
+                  source={require('../../assets/takephoto.png')}
+                  style={styles.SelectImg}
+                />
+                <Text style={styles.IconTitle}>사진 촬영하기</Text>
               </View>
               <View>
-              <Pressable
-                onPress={() => navigation.navigate(PickerScreen, { maxCount: 10 })}
-              >
-                <Image source={require('../../assets/selectphoto.png')} style={styles.SelectImg} />
-              </Pressable>
-              <Text style={styles.IconTitle}>앨범에서 선택하기</Text>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate(PickerScreen, { maxCount: 10 })
+                  }
+                >
+                  <Image
+                    source={require('../../assets/selectphoto.png')}
+                    style={styles.SelectImg}
+                  />
+                </Pressable>
+                <Text style={styles.IconTitle}>앨범에서 선택하기</Text>
               </View>
             </View>
-          <Image source={require('../../assets/etc.png')} style={styles.etc}/>
-          <Image source={require('../../assets/etc2.jpg')} style={styles.etc2} />
+            <Image
+              source={require('../../assets/etc.png')}
+              style={styles.etc}
+            />
+            <Image
+              source={require('../../assets/etc2.jpg')}
+              style={styles.etc2}
+            />
           </View>
         )}
       </View>
@@ -257,9 +271,9 @@ const styles = StyleSheet.create({
   selectContainer: {
     flexDirection: 'row',
   },
-  photoContainer:{
+  photoContainer: {
     flexDirection: 'row',
-    marginTop : '10%',
+    marginTop: '10%',
   },
   description: {
     color: GRAY.DARK,
@@ -283,8 +297,8 @@ const styles = StyleSheet.create({
   selectAdot: {
     width: 200,
     height: 250,
-    marginLeft : 10,
-    resizeMode: 'contain'
+    marginLeft: 10,
+    resizeMode: 'contain',
   },
   loadingTitle: {
     fontSize: 22,
@@ -337,25 +351,24 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
   },
-  etc:{
+  etc: {
     width: '50%',
     height: 50,
     marginTop: '25%',
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
 
-  etc2:{
+  etc2: {
     width: 200,
     height: 100,
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   IconTitle: {
     // fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 10
+    marginTop: 10,
   },
-  
 });
 
 export default SelectHome;

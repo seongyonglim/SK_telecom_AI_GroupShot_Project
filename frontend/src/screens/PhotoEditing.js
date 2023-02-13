@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import AWS from 'aws-sdk';
 import axios from 'axios';
+import { FontAwesome } from '@expo/vector-icons';
 import { AWS_KEY, flask_API } from '../AWS';
 
 // Flask 서버의 URL
@@ -36,7 +37,7 @@ const PhotoEditing = () => {
   const navigation = useNavigation();
 
   // S3에서 데이터를 다운로드하는 함수
-  const downloadFromS3 = async () => {
+  const downloadFromS3 = async (pageIndex) => {
     // AWS SDK 설정
     AWS.config.update({
       accessKeyId: AWS_KEY.accessKey,
@@ -145,8 +146,8 @@ const PhotoEditing = () => {
 
   // S3로 다운로드 한 이미지들을 배열 저장
   useEffect(() => {
-    downloadFromS3();
-  }, []);
+    downloadFromS3(pageIndex);
+  }, [pageIndex]);
 
   // 서브 이미지 선택 시 동작 함수
   const onImageSelected = async (selectedImageUri) => {
@@ -185,20 +186,27 @@ const PhotoEditing = () => {
 
   const handleNextPage = async () => {
     if (pageIndex + 1 < faceNum) {
+      setLoading(true);
+      await downloadFromS3(pageIndex + 1);
       setPageIndex(pageIndex + 1);
-      setLoading(true); // 로딩 스크린 열기
-      //console.log('pageIndex:',pageIndex,'faceNum:',faceNum,'pageIndex < faceNum: ',pageIndex < faceNum)
-
-      await downloadFromS3(); // 페이지에 나온 사진 전부 reload 하고
-
-      setTimeout(() => {
-        setLoading(false); // 로딩 스크린 닫기
-      }, 2000);
+      console.log(pageIndex);
+      setLoading(false);
     } else {
       navigation.navigate('Login');
     }
   };
 
+  const handlePrevPage = async () => {
+    if (pageIndex - 1 >= 0) {
+      setLoading(true);
+      await downloadFromS3(pageIndex - 1);
+      setPageIndex(pageIndex - 1);
+      console.log(pageIndex);
+      setLoading(false);
+    } else {
+      console.log('팝업 : 첫 번째 사람입니다.');
+    }
+  };
   return (
     <View style={styles.container}>
       {/* 로딩화면 */}
@@ -212,7 +220,20 @@ const PhotoEditing = () => {
       </Modal>
       {/* 로딩화면 */}
 
-      <Button title="Next" onPress={handleNextPage} />
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingHorizontal: 16,
+        }}
+      >
+        <TouchableOpacity onPress={handlePrevPage}>
+          <FontAwesome name="chevron-left" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleNextPage}>
+          <FontAwesome name="chevron-right" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
       <Image style={styles.mainImageContainer} source={{ uri: imageUri }} />
 
       <ScrollView horizontal>
@@ -232,7 +253,6 @@ const PhotoEditing = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#afcbf4',
   },

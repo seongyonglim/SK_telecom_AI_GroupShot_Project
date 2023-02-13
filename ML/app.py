@@ -13,7 +13,7 @@ import draw_face
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bucketwouldu/"
+aws_path = "s3://bucketgains/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
