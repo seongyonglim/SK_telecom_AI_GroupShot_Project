@@ -5,10 +5,10 @@ import os
 import sys
 
 # 불러올 이미지 지정
-path_main = "images/main_img/"
+path_result = "images/result_img/"
 
 # 저장할 경로 지정
-path_result = "images/result_img/"
+path_boxed = "images/boxed_img/"
 
 
 def main():
@@ -32,11 +32,11 @@ def main():
     net.load(model_path)
 
     # 파일 리스트 가져오기
-    listdir = os.listdir(path_main)
+    listdir = os.listdir(path_result)
 
     # 각 개체에 대해 반복
     for file in listdir:
-        img_path = os.path.join(path_main, file)
+        img_path = os.path.join(path_result, file)
         orig_image = cv2.imread(img_path)
         if orig_image is None:
             continue
@@ -52,9 +52,7 @@ def main():
             cv2.rectangle(orig_image, (xmin, ymin),
                           (xmax, ymax), (0, 0, 255), 2)
 
-        result_path = os.path.join(path_result, file)
-        cv2.imwrite(path_result + "result.jpg", orig_image)
-    print("Result image is stored in", path_result + "result.jpg")
+        cv2.imwrite(path_boxed + "boxed.jpg", orig_image)
 
 
 if __name__ == '__main__':

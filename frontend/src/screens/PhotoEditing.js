@@ -47,10 +47,10 @@ const PhotoEditing = () => {
     // S3 객체 생성
     const s3 = new AWS.S3();
 
-    // "result_img" 폴더에서 원본 이미지 가져오기
+    // "boxed_img" 폴더에서 박스가 그려진 이미지 가져오기
     const mainImgParams = {
       Bucket: AWS_KEY.bucket,
-      Prefix: 'result_img/',
+      Prefix: 'boxed_img/',
     };
 
     // main 이미지 가져오기

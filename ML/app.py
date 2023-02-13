@@ -5,6 +5,7 @@ import combine
 from cloudpathlib import CloudPath
 from flask import Flask
 from flask_cors import CORS
+import boto3
 
 # 현우 수정
 import draw_face
@@ -18,6 +19,7 @@ path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
 path_face = "images/faces_separated/"  # 얼굴 이미지 저장 경로
 path_result = "images/result_img/"  # 결과물 이미지 저장 경로
+path_boxed = "images/boxed_img/"  # 박스처리 이미지 저장 경로
 path_face_num = "images/face_num/"  # 얼굴 이미지 저장 경로
 
 # 현우 수정
@@ -51,6 +53,13 @@ def init_dirs():
     for img in img_list:
         os.remove(path_result + img)
 
+    # 박스처리 이미지 폴더 신규 생성 / 폴더 비우기
+    if not os.path.isdir(path_boxed):
+        os.mkdir(path_boxed)
+    img_list = os.listdir(path_boxed)
+    for img in img_list:
+        os.remove(path_boxed + img)
+
     # 얼굴 이미지 폴더 신규 생성 / 폴더 비우기
     if not os.path.isdir(path_face):
         os.mkdir(path_face)
@@ -77,9 +86,12 @@ def download_from_aws():
     main.download_to(path_main)
     print('\nmain image download completed')
 
+    main.download_to(path_result)
+    os.rename(path_result+os.listdir(path_result)[0], path_result+'result.jpg')
+
     # 현우 수정
     draw_face.main()
-    upload_result_to_aws()
+    upload_boxed_result_to_aws()
     print('\nred box upload completed')
 
 
@@ -95,9 +107,9 @@ def upload_cropped_faces():
 
 
 # AWS로 결과물 업로드하는 함수
-def upload_result_to_aws():
-    ui = CloudPath(aws_path+"result_img/")
-    ui.upload_from(path_result)
+def upload_boxed_result_to_aws():
+    ui = CloudPath(aws_path+"boxed_img/")
+    ui.upload_from(path_boxed)
     print('\nResult image upload completed')
 
 
@@ -146,10 +158,9 @@ def crop_face():
     upload_cropped_faces()
     return "Task Done"
 
+
 # 현우 수정
 # 터치한 사진 이름 저장한 폴더를 삭제하는 함수
-
-
 @app.route('/remove_want_to_modify_dir_AWS', methods=['GET'])
 def remove_want_to_modify_dir():
     ri = CloudPath(aws_path+"want_to_modify/")
@@ -157,17 +168,14 @@ def remove_want_to_modify_dir():
     print('\nRemove want_to_modify_dir Completed')
     return "Task Done"
 
+
 # 대표이미지 합성 후 업로드
 # 현우 수정
-
-
 @app.route('/combine_face', methods=['GET'])
 def combine_face():
     # 파일 이름 가져오는 방식을 boto로 사용함
     # 왜냐하면 cloudpath 왠진 모르겠는데 파일명 가져오는 방식에서 계속 막힘
     # 필요하면 cloudpath로 가져오는 방식 다시 고민해봄...
-    import boto3
-
     # boto client s3부터 가져옴
     s3 = boto3.client('s3')
 
@@ -185,16 +193,15 @@ def combine_face():
         # 4. Key 값을 / 기준으로 나누고 마지막거만 가져옴
         selected_face = result['Contents'][0]['Key'].split('/')[-1]
 
-        # 메인 이미지 가져옴
-        # selected_face도 이런식으로 하면 되는데 왜 안되는지는 아마 내가 코딩을 잘못했기 때문이 아닐까
-        main_img = os.listdir(path_main)[0]
-
         # 자연스럽게 수정해주어요
-        combine.main(cf_names, cf_coordinates, main_img, selected_face)
+        combine.main(cf_names, cf_coordinates, selected_face)
         print('\nFace Combine Completed')
 
+        # 합성한 사진위에 다시 박스그리기
+        draw_face.main()
+
         # AWS에 Result 올라감
-        upload_result_to_aws()
+        upload_boxed_result_to_aws()
 
         # want_to_modify 지움 나이스
         remove_want_to_modify_dir()

@@ -4,12 +4,12 @@ import sys
 import os
 
 path_faces = "images/faces_separated/"
-path_target = "images/main_img/"
+path_target = "images/result_img/result.jpg"
 path_final = "images/result_img/"
 
 
-def main(cf_names, cf_coordinates, dst_name, src_name):
-    dst_image = cv2.imread(path_target+dst_name)
+def main(cf_names, cf_coordinates, src_name):
+    dst_image = cv2.imread(path_target)
     src_image = cv2.imread(path_faces+src_name)
 
     # 중앙 좌표 구할때 쓰는 정보들
