@@ -177,11 +177,11 @@ const PhotoEditing = () => {
       console.error(error);
     }
 
-    await downloadFromS3(); // 페이지에 나온 사진 전부 reload 하고
+    await downloadFromS3(pageIndex); // 페이지에 나온 사진 전부 reload 하고
 
     setTimeout(() => {
       setLoading(false); // 로딩 스크린 닫기
-    }, 2000);
+    }, 4000);
   };
 
   const handleNextPage = async () => {
