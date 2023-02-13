@@ -18,11 +18,12 @@ path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
 path_face = "images/faces_separated/"  # 얼굴 이미지 저장 경로
 path_result = "images/result_img/"  # 결과물 이미지 저장 경로
+path_face_num = "images/face_num/"  # 얼굴 이미지 저장 경로
 
 # 현우 수정
 selected_face_path = "images/want_to_modify/"  # 대체할 얼굴 이름 저장
 
-cf_names, cf_coordinates = [], []
+cf_names, cf_coordinates, face_num = [], [], 0
 
 
 # 로컬 폴더 정리 함수
@@ -57,6 +58,13 @@ def init_dirs():
     for img in img_list:
         os.remove(path_face + img)
 
+    # 사진에 탐지된 인원수 저장 폴더 신규 생성 / 폴더 비우기
+    if not os.path.isdir(path_face_num):
+        os.mkdir(path_face_num)
+    file_list = os.listdir(path_face_num)
+    for file in file_list:
+        os.remove(path_face_num + file)
+
 
 # AWS로부터 대표사진 및 선택된 사진들 불러오는 함수
 def download_from_aws():
@@ -79,6 +87,10 @@ def download_from_aws():
 def upload_cropped_faces():
     ui = CloudPath(aws_path+"cropped_face_imgs/")
     ui.upload_from(path_face)
+
+    ui = CloudPath(aws_path+"face_num/")
+    ui.upload_from(path_face_num)
+
     print('\nCropped face images upload completed')
 
 
@@ -99,6 +111,8 @@ def remove_dirs():
     ri = CloudPath(aws_path+"selected_imgs/")
     ri.rmtree()
     ri = CloudPath(aws_path+"main_img/")
+    ri.rmtree()
+    ri = CloudPath(aws_path+"face_num/")
     ri.rmtree()
     print('\nRemoval Completed')
     return "Task Done"
@@ -121,11 +135,14 @@ def check_uploads():
 # 얼굴 crop 하고 AWS에 저장하는 함수
 @ app.route('/crop_face', methods=['GET'])
 def crop_face():
-    global cf_names, cf_coordinates
+    global cf_names, cf_coordinates, face_num
     init_dirs()
     download_from_aws()
     # 불러온 사진으로부터 얼굴들만 추출하여 cf_names 에 이름들, cf_coordinates에 시작좌표들 저장
-    cf_names, cf_coordinates = detect_faces_masks.main()
+    cf_names, cf_coordinates, face_num = detect_faces_masks.main()
+    fp = open(path_face_num+str(face_num)+'.txt', 'w')
+    fp.close()
+
     upload_cropped_faces()
     return "Task Done"
 

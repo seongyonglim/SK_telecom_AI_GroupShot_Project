@@ -11,17 +11,21 @@ import {
 import BG from '../../assets/splash.webp';
 import { PRIMARY } from '../colors';
 import { LogBox } from 'react-native';
+import axios from 'axios';
 
 LogBox.ignoreLogs([
   "[Reanimated] Couldn't determine the version of the native part of Reanimated.",
 ]);
 const Login = () => {
+  var url = 'http://172.23.253.115:5000/';
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const navigation = useNavigation();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    await axios.get(url + 'cleanup_AWS');
     navigation.navigate('SelectHome');
   };
 

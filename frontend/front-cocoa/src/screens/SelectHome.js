@@ -1,7 +1,6 @@
 import {
   useNavigation,
   useRoute,
-  NavigationContainer,
 } from '@react-navigation/native';
 import {
   StyleSheet,
@@ -9,7 +8,6 @@ import {
   View,
   useWindowDimensions,
   Pressable,
-  Alert,
   Platform,
   Image,
   Button,
@@ -19,10 +17,9 @@ import {
 } from 'react-native';
 import { GRAY, WHITE } from '../colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState, useCallback } from 'react';
-import { getLocalUri } from '../components/ImagePicker';
+import { useEffect, useState} from 'react';
 import PickerScreen from './PickerScreen';
-import PythonTestScreen from './PythonTestScreen';
+import PhotoEditing from './PhotoEditing';
 import { RNS3 } from 'react-native-s3-upload';
 
 import Swiper from 'react-native-swiper';
@@ -53,6 +50,7 @@ const selected_options = {
   secretKey: '비밀',
   successActionStatus: 201,
 };
+
 /////////
 
 const SelectHome = () => {
@@ -122,13 +120,13 @@ const SelectHome = () => {
         setIsUploading(false);
         setShowModal(false);
         resolve();
-      }, 20000);
+      }, 3500*photos.length);
     });
   }
 
   const handleOnPress = async () => {
     uploadToS3().then(() => {
-      navigation.navigate(PythonTestScreen);
+      navigation.navigate(PhotoEditing);
     });
   };
 

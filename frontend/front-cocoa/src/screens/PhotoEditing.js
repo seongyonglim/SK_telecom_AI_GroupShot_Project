@@ -29,6 +29,8 @@ const PhotoEditing = () => {
   const [pageIndex, setPageIndex] = useState(0);
   // 로딩 화면을 보여줄지 여부
   const [loading, setLoading] = useState(false);
+  // 로딩 화면을 보여줄지 여부
+  const [faceNum, setFaceNum] = useState(0);
 
   // 네비게이션 객체
   const navigation = useNavigation();
@@ -73,6 +75,33 @@ const PhotoEditing = () => {
     });
     setImageUri(mainImgUrl);
     ////////////////////
+
+    const faceNumParams = {
+      Bucket: 'bucketwouldu',
+      Prefix: 'face_num/',
+    };
+
+    s3.listObjectsV2(faceNumParams, function (err, data) {
+      if (err) {
+        console.log(err, err.stack);
+      } else {
+        const faceNumFirstParams = {
+          Bucket: 'bucketwouldu',
+          Key: data.Contents[0].Key,
+        };
+        if (faceNumFirstParams.Key.endsWith('.txt')) {
+          const fileName = faceNumFirstParams.Key.split('/')
+            .pop()
+            .split('.')[0];
+          setFaceNum(fileName);
+          //console.log(fileName);
+        } else {
+          console.log('The first file is not a .txt file.');
+        }
+      }
+    });
+
+    /////////////////////////
 
     // 서브 이미지 가져오기
     const croppedImgParams = {
@@ -155,11 +184,10 @@ const PhotoEditing = () => {
   };
 
   const handleNextPage = async () => {
-    if (pageIndex + 1 < otherImages.length) {
+    if (pageIndex + 1 < faceNum) {
       setPageIndex(pageIndex + 1);
-      console.log(pageIndex + 1);
-      console.log(otherImages.length);
       setLoading(true); // 로딩 스크린 열기
+      //console.log('pageIndex:',pageIndex,'faceNum:',faceNum,'pageIndex < faceNum: ',pageIndex < faceNum)
 
       await downloadFromS3(); // 페이지에 나온 사진 전부 reload 하고
 
@@ -167,7 +195,7 @@ const PhotoEditing = () => {
         setLoading(false); // 로딩 스크린 닫기
       }, 2000);
     } else {
-      navigation.navigate('PhotoEditing');
+      navigation.navigate('Login');
     }
   };
 

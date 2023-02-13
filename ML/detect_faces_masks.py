@@ -128,7 +128,7 @@ def main():
                 cropped_face_coordinates_group[i][j])
     # print(sum)
     print('\nFace crop completed')
-    return cropped_face_names, cropped_face_coordinates
+    return cropped_face_names, cropped_face_coordinates, face_nums[main_idx]
 
 
 if __name__ == '__main__':
