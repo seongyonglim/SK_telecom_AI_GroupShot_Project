@@ -39,8 +39,8 @@ const PhotoEditing = () => {
   const downloadFromS3 = async () => {
     // AWS SDK 설정
     AWS.config.update({
-      accessKey: AWS_KEY.accessKey,
-      secretKey: AWS_KEY.secretKey,
+      accessKeyId: AWS_KEY.accessKey,
+      secretAccessKey: AWS_KEY.secretKey,
       region: AWS_KEY.region,
     });
 
