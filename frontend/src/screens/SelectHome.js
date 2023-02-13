@@ -1,7 +1,4 @@
-import {
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   StyleSheet,
   Text,
@@ -17,7 +14,7 @@ import {
 } from 'react-native';
 import { GRAY, WHITE } from '../colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import PickerScreen from './PickerScreen';
 import PhotoEditing from './PhotoEditing';
 import { RNS3 } from 'react-native-s3-upload';
@@ -27,6 +24,7 @@ import { BlurView } from 'expo-blur';
 import { BLACK, PRIMARY } from '../colors';
 import FastImage from '../components/FastImage';
 import axios from 'axios';
+import { AWS_KEY, flask_API } from '../AWS';
 
 LogBox.ignoreLogs([
   "No native splash screen registered for given view controller. Call 'SplashScreen.show' for given view controller first.",
@@ -35,26 +33,26 @@ LogBox.ignoreLogs([
 ///////// 이 사이에 main, select option을 넣으세요.
 const main_options = {
   keyPrefix: 'main_img/',
-  bucket: 'bucketwouldu',
-  region: 'ap-northeast-2',
-  accessKey: '비밀',
-  secretKey: '비밀',
+  bucket: AWS_KEY.bucket,
+  region: AWS_KEY.region,
+  accessKey: AWS_KEY.accessKey,
+  secretKey: AWS_KEY.secretKey,
   successActionStatus: 201,
 };
 
 const selected_options = {
   keyPrefix: 'selected_imgs/',
-  bucket: 'bucketwouldu',
-  region: 'ap-northeast-2',
-  accessKey: '비밀',
-  secretKey: '비밀',
+  bucket: AWS_KEY.bucket,
+  region: AWS_KEY.region,
+  accessKey: AWS_KEY.accessKey,
+  secretKey: AWS_KEY.secretKey,
   successActionStatus: 201,
 };
 
 /////////
 
 const SelectHome = () => {
-  var url = 'http://172.23.253.115:5000/';
+  var url = flask_API;
   const navigation = useNavigation();
   const { params } = useRoute();
 
@@ -120,7 +118,7 @@ const SelectHome = () => {
         setIsUploading(false);
         setShowModal(false);
         resolve();
-      }, 3500*photos.length);
+      }, 3500 * photos.length);
     });
   }
 

@@ -11,11 +11,11 @@ import {
   Modal,
 } from 'react-native';
 import AWS from 'aws-sdk';
-import Login from './Login';
 import axios from 'axios';
+import { AWS_KEY, flask_API } from '../AWS';
 
 // Flask 서버의 URL
-var url = 'http://172.23.253.115:5000/';
+var url = flask_API;
 
 // 사진 편집 화면
 const PhotoEditing = () => {
@@ -39,9 +39,9 @@ const PhotoEditing = () => {
   const downloadFromS3 = async () => {
     // AWS SDK 설정
     AWS.config.update({
-      accessKeyId: '비밀',
-      secretAccessKey: '비밀',
-      region: 'ap-northeast-2',
+      accessKey: AWS_KEY.accessKey,
+      secretKey: AWS_KEY.secretKey,
+      region: AWS_KEY.region,
     });
 
     // S3 객체 생성
@@ -49,7 +49,7 @@ const PhotoEditing = () => {
 
     // "result_img" 폴더에서 원본 이미지 가져오기
     const mainImgParams = {
-      Bucket: 'bucketwouldu',
+      Bucket: AWS_KEY.bucket,
       Prefix: 'result_img/',
     };
 
@@ -62,7 +62,7 @@ const PhotoEditing = () => {
       });
     });
     const mainImgfirstParams = {
-      Bucket: 'bucketwouldu',
+      Bucket: AWS_KEY.bucket,
       Key: mainImgdata.Contents[0].Key,
     };
 
@@ -77,7 +77,7 @@ const PhotoEditing = () => {
     ////////////////////
 
     const faceNumParams = {
-      Bucket: 'bucketwouldu',
+      Bucket: AWS_KEY.bucket,
       Prefix: 'face_num/',
     };
 
@@ -86,7 +86,7 @@ const PhotoEditing = () => {
         console.log(err, err.stack);
       } else {
         const faceNumFirstParams = {
-          Bucket: 'bucketwouldu',
+          Bucket: AWS_KEY.bucket,
           Key: data.Contents[0].Key,
         };
         if (faceNumFirstParams.Key.endsWith('.txt')) {
@@ -105,7 +105,7 @@ const PhotoEditing = () => {
 
     // 서브 이미지 가져오기
     const croppedImgParams = {
-      Bucket: 'bucketwouldu',
+      Bucket: AWS_KEY.bucket,
       Prefix: 'cropped_face_imgs/',
     };
 
@@ -128,7 +128,7 @@ const PhotoEditing = () => {
             s3.getSignedUrl(
               'getObject',
               {
-                Bucket: 'bucketwouldu',
+                Bucket: AWS_KEY.bucket,
                 Key: object.Key,
               },
               (err, url) => {
@@ -154,15 +154,15 @@ const PhotoEditing = () => {
     const fileName = selectedImageUri.split('/').pop().split('?')[0];
 
     const s3 = new AWS.S3({
-      accessKeyId: '비밀',
-      secretAccessKey: '비밀',
-      region: 'ap-northeast-2',
+      accessKeyId: AWS_KEY.accessKey,
+      secretAccessKey: AWS_KEY.secretKey,
+      region: AWS_KEY.region,
     });
 
     setLoading(true); // 로딩 스크린 열기
 
     const params = {
-      Bucket: 'bucketwouldu',
+      Bucket: AWS_KEY.bucket,
       Key: `want_to_modify/${fileName}`,
       Body: fileName,
     };
