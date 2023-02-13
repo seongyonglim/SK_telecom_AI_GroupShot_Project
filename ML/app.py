@@ -6,15 +6,22 @@ from cloudpathlib import CloudPath
 from flask import Flask
 from flask_cors import CORS
 
+# 현우 수정
+import draw_face
+
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bucketwould/"
+aws_path = "s3://bucketwouldu/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
 path_face = "images/faces_separated/"  # 얼굴 이미지 저장 경로
 path_result = "images/result_img/"  # 결과물 이미지 저장 경로
+    
+# 현우 수정
+selected_face_path = "images/want_to_modify/" # 대체할 얼굴 이름 저장
+
 cf_names, cf_coordinates = [], []
 
 
@@ -62,6 +69,10 @@ def download_from_aws():
     main.download_to(path_main)
     print('\nmain image download completed')
 
+    # 현우 수정
+    draw_face.main()
+    upload_result_to_aws()
+    print('\nred box upload completed')
 
 # AWS로 얼굴 사진들 업로드하는 함수
 def upload_cropped_faces():
@@ -89,7 +100,6 @@ def remove_dirs():
     ri.rmtree()
     print('\nRemoval Completed')
 
-
 # 업로드 사진 확인 용도로 만들어놓은 함수
 def check_uploads():
     path_check = "images/check_downloads/"
@@ -115,22 +125,59 @@ def crop_face():
     upload_cropped_faces()
     return "Task Done"
 
+# 현우 수정
+# 터치한 사진 이름 저장한 폴더를 삭제하는 함수
+@app.route('/remove_want_to_modify_dir_AWS', methods=['GET'])
+def remove_want_to_modify_dir():
+    ri = CloudPath(aws_path+"want_to_modify/")
+    ri.rmtree()
+    print('\nRemove want_to_modify_dir Completed')
+    return "Task Done"
 
 # 대표이미지 합성 후 업로드
-@ app.route('/combine_face', methods=['GET'])
+# 현우 수정
+@app.route('/combine_face', methods=['GET'])
 def combine_face():
-    # 대표이미지 이름 저장
-    main_img = os.listdir(path_main)[0]
+    # 파일 이름 가져오는 방식을 boto로 사용함
+    # 왜냐하면 cloudpath 왠진 모르겠는데 파일명 가져오는 방식에서 계속 막힘
+    # 필요하면 cloudpath로 가져오는 방식 다시 고민해봄...
+    import boto3
 
-    # 대체할 얼굴 이름 저장
-    selected_face = cf_names[5]
+    # boto client s3부터 가져옴
+    s3 = boto3.client('s3')
 
-    # 합성할 대상인 main_img에 붙여넣을 얼굴 selected_face를 자연스럽게 합성시킨다
-    combine.main(cf_names, cf_coordinates, main_img, selected_face)
-    print('\nFace Combine Completed')
-    # 합성한 사진 AWS로 업로드
-    upload_result_to_aws()
-    return "Task Done"
+    # "want_to_modify" 폴더를 리스트로 만듦
+    result = s3.list_objects_v2(Bucket='bucketwouldu', Prefix='want_to_modify/')
+
+    # 진짜 에러만 엄청 떠서 스트레스 받아 죽을뻔... 에러 뜨면 따로 체크하는 코드가 필요했음
+    # want_to_modify 폴더 안에 당연히 파일이 들어가 있어야되는데 없을 때가 있길래... if, else 문 처리
+    if 'Contents' in result:
+        # 파일 네임 받는 방법
+        # 1. 'want_to_modify/' 폴더를 리스트로 받아옴
+        # 2. 폴더 안에 파일 한 개만 있겠지? 첫 번째 파일 가져옴
+        # 3. Key 값 받아옴
+        # 4. Key 값을 / 기준으로 나누고 마지막거만 가져옴
+        selected_face = result['Contents'][0]['Key'].split('/')[-1]
+
+        # 메인 이미지 가져옴
+        # selected_face도 이런식으로 하면 되는데 왜 안되는지는 아마 내가 코딩을 잘못했기 때문이 아닐까
+        main_img = os.listdir(path_main)[0]
+
+        # 자연스럽게 수정해주어요
+        combine.main(cf_names, cf_coordinates, main_img, selected_face)
+        print('\nFace Combine Completed')
+
+        # AWS에 Result 올라감
+        upload_result_to_aws()
+
+        # want_to_modify 지움 나이스
+        remove_want_to_modify_dir()
+
+        return "Task Done"
+    else:
+        return "No files found in the 'want_to_modify' directory"
+
+
 
 
 # 업로드 이미지 확인용
@@ -140,10 +187,6 @@ def check_uploaded_files():
     return "Task Done"
 
 
-@ app.route('/cleanup_AWS', methods=['GET'])
-def cleanup_files():
-    remove_dirs()
-    return "Task Done"
 
 
 if __name__ == "__main__":

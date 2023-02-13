@@ -10,12 +10,12 @@ import {
 import BG from '../../assets/splash.webp';
 import { PRIMARY } from '../colors';
 import axios from 'axios';
-import PhotoEditing from './.PhotoEditing';
+import PhotoEditing from './PhotoEditing';
 
 const PythonTestScreen = () => {
   const navigation = useNavigation();
 
-  var url = 'http://172.23.254.165:5000/';
+  var url = 'http://172.30.1.61:5000/';
 
   {
     /* 파이썬 얼굴 crop + 합성 동작 버튼 */

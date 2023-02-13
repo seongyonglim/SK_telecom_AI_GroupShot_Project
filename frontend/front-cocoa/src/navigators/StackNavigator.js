@@ -6,7 +6,7 @@ import PythonTestScreen from '../screens/PythonTestScreen';
 //import { initFirebase } from '../api/firebase';
 import { useEffect, useState } from 'react';
 import { Asset } from 'expo-asset';
-import PhotoEditing from './../screens/PhotoEditing';
+import PhotoEditing from '../screens/PhotoEditing';
 
 const ImageAssets = [
   require('../../assets/cover.png'),

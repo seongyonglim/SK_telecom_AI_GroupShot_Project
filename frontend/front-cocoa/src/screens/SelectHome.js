@@ -38,25 +38,25 @@ LogBox.ignoreLogs([
 ///////// 이 사이에 main, select option을 넣으세요.
 const main_options = {
   keyPrefix: 'main_img/',
-  bucket: 'bucketwould',
+  bucket: 'bucketwouldu',
   region: 'ap-northeast-2',
-  accessKey: 'AKIAUVZAWXXXBO7TFFFP',
-  secretKey: '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',
+  accessKey: '',
+  secretKey: '',
   successActionStatus: 201,
 };
 
 const selected_options = {
   keyPrefix: 'selected_imgs/',
-  bucket: 'bucketwould',
+  bucket: 'bucketwouldu',
   region: 'ap-northeast-2',
-  accessKey: 'AKIAUVZAWXXXBO7TFFFP',
-  secretKey: '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',
+  accessKey: '',
+  secretKey: '',
   successActionStatus: 201,
 };
 /////////
 
 const SelectHome = () => {
-  var url = 'http://172.23.244.173:5000/';
+  var url = 'http://172.30.1.61:5000/';
   const navigation = useNavigation();
   const { params } = useRoute();
 
@@ -122,7 +122,7 @@ const SelectHome = () => {
         setIsUploading(false);
         setShowModal(false);
         resolve();
-      }, 15000);
+      }, 20000);
     });
   }
 
@@ -217,7 +217,9 @@ const SelectHome = () => {
                   alignItems: 'center',
                 }}
               >
-                <Text style={styles.loadingTitle}>서현아 보고있어?</Text>
+                <Text style={styles.loadingTitle}>
+                  멋진 단체 사진 만들어 볼까?
+                </Text>
                 <Image source={require('../../assets/loadingCharacter.gif')} />
               </View>
             </Modal>
@@ -272,6 +274,11 @@ const styles = StyleSheet.create({
   selectAdot: {
     width: 200,
     height: 250,
+  },
+  loadingTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlignVertical: 'center',
   },
   checkBoxContainer: {
     position: 'absolute',
