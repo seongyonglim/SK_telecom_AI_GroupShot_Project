@@ -142,14 +142,14 @@ const SelectHome = () => {
     <View style={styles.container}>
       <View style={styles.selectContainer}>
         <Text style={styles.selectTitle}>
-          {'편집하고 싶은 사진을\n앨범에서 선택해줘!'}
+        {'편집하고 싶은\n사진을 촬영하거나\n앨범에서 선택해줘!'}
         </Text>
         <Image
           source={require('../../assets/selectadot.gif')}
           style={styles.selectAdot}
         />
       </View>
-      <Text style={styles.description}>유사한 이미지들을 선택하세요.</Text>
+      {/* <Text style={styles.description}>이미지는 n장까지 선택 가능합니다.</Text> */}
       <View>
         {/* 사진을 고른 뒤에는 ImageSwiper를 표출해줍니다. */}
         {photos.length ? (
@@ -162,7 +162,7 @@ const SelectHome = () => {
             >
               {/* 대표사진 선택기능 */}
               {photos.map((photo, idx) => (
-                <TouchableOpacity
+                <Pressable
                   key={idx}
                   style={[
                     styles.photo,
@@ -187,13 +187,14 @@ const SelectHome = () => {
                   {/* 선택한 것만 체크박스 처리하는 부분 */}
                   {currentIndex === idx && (
                     <View style={styles.checkBoxContainer}>
-                      <Image
-                        source={require('../../assets/btn_check_on.webp')}
-                        style={styles.checkBox}
+                      <MaterialCommunityIcons
+                        name="check-circle"
+                        size={50}
+                        color={WHITE}
                       />
                     </View>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </Swiper>
             {/* 버튼을 누르면 AWS S3 업로드 함
@@ -224,16 +225,24 @@ const SelectHome = () => {
         ) : (
           // 근데 사진을 안골랐으면 버튼을 보여줘요
           // 이 부분 Adot 따서 Adot 처럼 고쳐주기
-          <Pressable
-            style={styles.photoButton}
-            onPress={() => navigation.navigate(PickerScreen, { maxCount: 10 })}
-          >
-            <MaterialCommunityIcons
-              name="image-plus"
-              size={80}
-              color={GRAY.DEFAULT}
-            />
-          </Pressable>
+          <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+            <View style={styles.photoContainer}>
+              <View>
+              <Image source={require('../../assets/takephoto.png')} style={styles.SelectImg} />
+              <Text style={styles.IconTitle}>사진 촬영하기</Text>
+              </View>
+              <View>
+              <Pressable
+                onPress={() => navigation.navigate(PickerScreen, { maxCount: 10 })}
+              >
+                <Image source={require('../../assets/selectphoto.png')} style={styles.SelectImg} />
+              </Pressable>
+              <Text style={styles.IconTitle}>앨범에서 선택하기</Text>
+              </View>
+            </View>
+          <Image source={require('../../assets/etc.png')} style={styles.etc}/>
+          <Image source={require('../../assets/etc2.jpg')} style={styles.etc2} />
+          </View>
         )}
       </View>
     </View>
@@ -248,6 +257,10 @@ const styles = StyleSheet.create({
   selectContainer: {
     flexDirection: 'row',
   },
+  photoContainer:{
+    flexDirection: 'row',
+    marginTop : '10%',
+  },
   description: {
     color: GRAY.DARK,
     paddingHorizontal: 20,
@@ -256,20 +269,22 @@ const styles = StyleSheet.create({
   photoButton: {
     width: '100%',
     height: '80%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     backgroundColor: GRAY.LIGHT,
   },
   selectTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'left',
-    marginLeft: 20,
+    marginLeft: 25,
     textAlignVertical: 'center',
   },
   selectAdot: {
     width: 200,
     height: 250,
+    marginLeft : 10,
+    resizeMode: 'contain'
   },
   loadingTitle: {
     fontSize: 22,
@@ -280,7 +295,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
-    backgroundColor: '#fff',
     padding: 10,
     borderRadius: 5,
   },
@@ -298,25 +312,50 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   dot: {
-    backgroundColor: BLACK,
-    width: 8,
+    backgroundColor: WHITE,
+    width: 12,
     height: 8,
     borderRadius: 4,
-    marginLeft: 3,
-    marginRight: 3,
-    marginTop: 3,
-    marginBottom: 3,
+    marginLeft: 4,
+    marginRight: 4,
+    marginTop: 4,
+    marginBottom: 4,
   },
   activeDot: {
-    backgroundColor: PRIMARY.DEFAULT,
-    width: 8,
+    backgroundColor: GRAY.DARK,
+    width: 12,
     height: 8,
     borderRadius: 4,
-    marginLeft: 3,
-    marginRight: 3,
-    marginTop: 3,
-    marginBottom: 3,
+    marginLeft: 4,
+    marginRight: 4,
+    marginTop: 4,
+    marginBottom: 4,
   },
+  SelectImg: {
+    width: 180,
+    height: 180,
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  etc:{
+    width: '50%',
+    height: 50,
+    marginTop: '25%',
+    resizeMode: 'contain'
+  },
+
+  etc2:{
+    width: 200,
+    height: 100,
+    resizeMode: 'contain'
+  },
+  IconTitle: {
+    // fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10
+  },
+  
 });
 
 export default SelectHome;
