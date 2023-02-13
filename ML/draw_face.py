@@ -10,6 +10,7 @@ path_main = "images/main_img/"
 # 저장할 경로 지정
 path_result = "images/result_img/"
 
+
 def main():
     currentdir = os.path.dirname(os.path.realpath(__file__))
     parentdir = os.path.dirname(currentdir)
@@ -48,10 +49,13 @@ def main():
             ymin = int(box[1])
             xmax = int(box[2])
             ymax = int(box[3])
-            cv2.rectangle(orig_image, (xmin, ymin), (xmax, ymax), (0, 0, 255), 2)
+            cv2.rectangle(orig_image, (xmin, ymin),
+                          (xmax, ymax), (0, 0, 255), 2)
 
         result_path = os.path.join(path_result, file)
         cv2.imwrite(path_result + "result.jpg", orig_image)
     print("Result image is stored in", path_result + "result.jpg")
+
+
 if __name__ == '__main__':
     main()

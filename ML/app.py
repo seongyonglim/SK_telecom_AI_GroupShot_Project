@@ -18,9 +18,9 @@ path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
 path_face = "images/faces_separated/"  # 얼굴 이미지 저장 경로
 path_result = "images/result_img/"  # 결과물 이미지 저장 경로
-    
+
 # 현우 수정
-selected_face_path = "images/want_to_modify/" # 대체할 얼굴 이름 저장
+selected_face_path = "images/want_to_modify/"  # 대체할 얼굴 이름 저장
 
 cf_names, cf_coordinates = [], []
 
@@ -74,6 +74,7 @@ def download_from_aws():
     upload_result_to_aws()
     print('\nred box upload completed')
 
+
 # AWS로 얼굴 사진들 업로드하는 함수
 def upload_cropped_faces():
     ui = CloudPath(aws_path+"cropped_face_imgs/")
@@ -89,6 +90,7 @@ def upload_result_to_aws():
 
 
 # 얼굴사진 및 최종사진 삭제 함수
+@ app.route('/cleanup_AWS', methods=['GET'])
 def remove_dirs():
     ri = CloudPath(aws_path+"cropped_face_imgs/")
     ri.rmtree()
@@ -99,6 +101,8 @@ def remove_dirs():
     ri = CloudPath(aws_path+"main_img/")
     ri.rmtree()
     print('\nRemoval Completed')
+    return "Task Done"
+
 
 # 업로드 사진 확인 용도로 만들어놓은 함수
 def check_uploads():
@@ -127,6 +131,8 @@ def crop_face():
 
 # 현우 수정
 # 터치한 사진 이름 저장한 폴더를 삭제하는 함수
+
+
 @app.route('/remove_want_to_modify_dir_AWS', methods=['GET'])
 def remove_want_to_modify_dir():
     ri = CloudPath(aws_path+"want_to_modify/")
@@ -136,6 +142,8 @@ def remove_want_to_modify_dir():
 
 # 대표이미지 합성 후 업로드
 # 현우 수정
+
+
 @app.route('/combine_face', methods=['GET'])
 def combine_face():
     # 파일 이름 가져오는 방식을 boto로 사용함
@@ -147,7 +155,8 @@ def combine_face():
     s3 = boto3.client('s3')
 
     # "want_to_modify" 폴더를 리스트로 만듦
-    result = s3.list_objects_v2(Bucket='bucketwouldu', Prefix='want_to_modify/')
+    result = s3.list_objects_v2(
+        Bucket='bucketwouldu', Prefix='want_to_modify/')
 
     # 진짜 에러만 엄청 떠서 스트레스 받아 죽을뻔... 에러 뜨면 따로 체크하는 코드가 필요했음
     # want_to_modify 폴더 안에 당연히 파일이 들어가 있어야되는데 없을 때가 있길래... if, else 문 처리
@@ -178,15 +187,11 @@ def combine_face():
         return "No files found in the 'want_to_modify' directory"
 
 
-
-
 # 업로드 이미지 확인용
 @ app.route('/check_upload', methods=['GET'])
 def check_uploaded_files():
     check_uploads()
     return "Task Done"
-
-
 
 
 if __name__ == "__main__":

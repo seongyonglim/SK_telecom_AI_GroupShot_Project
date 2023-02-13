@@ -15,7 +15,7 @@ import Login from './Login';
 import axios from 'axios';
 
 // Flask 서버의 URL
-var url = 'http://172.30.1.61:5000/';
+var url = 'http://172.23.253.115:5000/';
 
 // 사진 편집 화면
 const PhotoEditing = () => {
@@ -37,8 +37,8 @@ const PhotoEditing = () => {
   const downloadFromS3 = async () => {
     // AWS SDK 설정
     AWS.config.update({
-      accessKeyId: '',
-      secretAccessKey: '',
+      accessKeyId: '비밀',
+      secretAccessKey: '비밀',
       region: 'ap-northeast-2',
     });
 
@@ -125,8 +125,8 @@ const PhotoEditing = () => {
     const fileName = selectedImageUri.split('/').pop().split('?')[0];
 
     const s3 = new AWS.S3({
-      accessKeyId: '',
-      secretAccessKey: '',
+      accessKeyId: '비밀',
+      secretAccessKey: '비밀',
       region: 'ap-northeast-2',
     });
 

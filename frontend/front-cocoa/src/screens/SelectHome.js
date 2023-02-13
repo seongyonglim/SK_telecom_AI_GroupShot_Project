@@ -40,8 +40,8 @@ const main_options = {
   keyPrefix: 'main_img/',
   bucket: 'bucketwouldu',
   region: 'ap-northeast-2',
-  accessKey: '',
-  secretKey: '',
+  accessKey: '비밀',
+  secretKey: '비밀',
   successActionStatus: 201,
 };
 
@@ -49,14 +49,14 @@ const selected_options = {
   keyPrefix: 'selected_imgs/',
   bucket: 'bucketwouldu',
   region: 'ap-northeast-2',
-  accessKey: '',
-  secretKey: '',
+  accessKey: '비밀',
+  secretKey: '비밀',
   successActionStatus: 201,
 };
 /////////
 
 const SelectHome = () => {
-  var url = 'http://172.30.1.61:5000/';
+  var url = 'http://172.23.253.115:5000/';
   const navigation = useNavigation();
   const { params } = useRoute();
 
