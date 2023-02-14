@@ -175,7 +175,7 @@ const SelectHome = () => {
                     style={StyleSheet.absoluteFill}
                     resizeMode="cover"
                   />
-                  <BlurView
+                  {/* <BlurView
                     intensity={Platform.select({ ios: 10, android: 100 })}
                   >
                     <FastImage
@@ -183,7 +183,7 @@ const SelectHome = () => {
                       style={styles.photo}
                       resizeMode="contain"
                     />
-                  </BlurView>
+                  </BlurView> */}
                   {/* 선택한 것만 체크박스 처리하는 부분 */}
                   {currentIndex === idx && (
                     <View style={styles.checkBoxContainer}>
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   photoSelected: {
-    opacity: 0.8,
+    opacity: 1.0,
   },
   dot: {
     backgroundColor: WHITE,
