@@ -1,2 +1,2 @@
-start "cassandra_operation" .\AutoPy.bat
-start "cassandra_sql" .\AutoRN.bat
+start "AutoRunPython" .\AutoPy.bat
+start "AutoRunReactNative" .\AutoRN.bat
