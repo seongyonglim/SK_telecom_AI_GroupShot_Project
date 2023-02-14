@@ -18,6 +18,16 @@ import { AWS_KEY, flask_API } from '../AWS';
 // Flask 서버의 URL
 var url = flask_API;
 
+// AWS SDK 설정
+AWS.config.update({
+  accessKeyId: AWS_KEY.accessKey,
+  secretAccessKey: AWS_KEY.secretKey,
+  region: AWS_KEY.region,
+});
+
+// S3 객체 생성
+const s3 = new AWS.S3();
+
 // 사진 편집 화면
 const PhotoEditing = () => {
   // 원본 이미지의 URL
@@ -186,49 +196,74 @@ const PhotoEditing = () => {
 
   const handleNextPage = async () => {
     if (pageIndex + 1 < faceNum) {
-      setLoading(true);
-      await downloadFromS3(pageIndex + 1);
+      try {
+        setLoading(true);
+        const s3 = new AWS.S3({
+          accessKeyId: AWS_KEY.accessKey,
+          secretAccessKey: AWS_KEY.secretKey,
+          region: AWS_KEY.region,
+        });
+        await s3
+          .putObject({
+            Bucket: AWS_KEY.bucket,
+            Key: `pageIndex/${pageIndex + 1}.txt`,
+            Body: `${pageIndex + 1}`,
+          })
+          .promise();
+        await axios.get(url + '/draw_box');
+        await downloadFromS3(pageIndex + 1);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
       setPageIndex(pageIndex + 1);
     } else {
       navigation.navigate('Endding');
-      axios.get(url + '/upload_result')
+      axios.get(url + '/upload_result');
     }
   };
 
   const handlePrevPage = async () => {
     if (pageIndex - 1 >= 0) {
-      setLoading(true);
-      await downloadFromS3(pageIndex - 1);
+      try {
+        setLoading(true);
+        const s3 = new AWS.S3({
+          accessKeyId: AWS_KEY.accessKey,
+          secretAccessKey: AWS_KEY.secretKey,
+          region: AWS_KEY.region,
+        });
+        await s3
+          .putObject({
+            Bucket: AWS_KEY.bucket,
+            Key: `pageIndex/${pageIndex - 1}.txt`,
+            Body: `${pageIndex - 1}`,
+          })
+          .promise();
+        await axios.get(url + '/draw_box');
+        await downloadFromS3(pageIndex - 1);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
       setPageIndex(pageIndex - 1);
     } else {
       console.log('팝업 : 첫 번째 사람입니다.');
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const params = {
-        Bucket: AWS_KEY.bucket,
-        Key: `pageIndex/${pageIndex}.txt`,
-        Body: `${pageIndex}`,
-      };
-      const s3 = new AWS.S3({
-        accessKeyId: AWS_KEY.accessKey,
-        secretAccessKey: AWS_KEY.secretKey,
-        region: AWS_KEY.region,
-      });
-      await s3.putObject(params).promise();
-      setLoading(false);
-    })();
-  }, [pageIndex]);
-
   return (
     <View style={styles.container}>
       {/* 로딩화면 */}
       <Modal visible={loading}>
         <View
-          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fefbfc',
+          }}
         >
           <ActivityIndicator size="large" />
           <Image source={require('../../assets/loadingCharacter.gif')} />
