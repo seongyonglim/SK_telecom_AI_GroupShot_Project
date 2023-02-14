@@ -198,7 +198,7 @@ def draw_box():
         cur = int(txt_list[0][:-4])
 
     draw_face.main(cur, main_full_coordinates,
-                   cropped_face_full_coordinates, face_idxs, sel_idx)
+                   cropped_face_full_coordinates, face_idxs)
 
     # AWS에 Result 올라감
     upload_boxed_result_to_aws()
@@ -229,6 +229,7 @@ def combine_face():
         combine.main(cf_names, cf_coordinates, selected_face)
         print('\nFace Combine Completed')
 
+        print('cf_names.index(selected_face)', cf_names.index(selected_face))
         face_idxs[sel_idx % len(face_idxs)] = sel_idx // len(face_idxs)
 
         # 합성한 사진위에 다시 박스그리기
