@@ -12,12 +12,13 @@ import BG from '../../assets/splash.webp';
 import { PRIMARY } from '../colors';
 import { LogBox } from 'react-native';
 import axios from 'axios';
+import { flask_API } from '../AWS';
 
 LogBox.ignoreLogs([
   "[Reanimated] Couldn't determine the version of the native part of Reanimated.",
 ]);
 const Login = () => {
-  var url = 'http://172.23.253.115:5000/';
+  var url = flask_API;
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

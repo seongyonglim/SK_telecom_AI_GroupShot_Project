@@ -1,8 +1,5 @@
-from vision.ssd.mb_tiny_RFB_fd import create_Mb_Tiny_RFB_fd, create_Mb_Tiny_RFB_fd_predictor
-from vision.ssd.config.fd_config import define_img_size
 import cv2
 import os
-import sys
 
 # 불러올 이미지 지정
 path_result = "images/result_img/"
@@ -10,49 +7,44 @@ path_result = "images/result_img/"
 # 저장할 경로 지정
 path_boxed = "images/boxed_img/"
 
+# 메인 이미지 경로
+path_main = "images/main_img/"
 
-def main():
-    currentdir = os.path.dirname(os.path.realpath(__file__))
-    parentdir = os.path.dirname(currentdir)
-    sys.path.append(parentdir)
 
-    # 기본값 지정
-    test_device = "cpu"
-    test_threshold = 0.3
-    test_candidate_size = 1200
-    test_input_size = 1280
+def main(cur, main_full_coordinates, cropped_face_full_coordinates, num, sel_idx):
+    # result 파일 불러오기
+    file = os.listdir(path_result)[0]
 
-    define_img_size(test_input_size)
+    orig_image = cv2.imread(path_result + file)
 
-    # 사용할 모델 지정
-    model_path = "pretrained/RFB-640-masked_face-v2.pth"
-    net = create_Mb_Tiny_RFB_fd(3, is_test=True, device=test_device)
-    predictor = create_Mb_Tiny_RFB_fd_predictor(
-        net, candidate_size=test_candidate_size, device=test_device)
-    net.load(model_path)
+    if num == 0:
+        xmin = int(main_full_coordinates[cur][0])
+        ymin = int(main_full_coordinates[cur][1])
+        xmax = int(main_full_coordinates[cur][2])
+        ymax = int(main_full_coordinates[cur][3])
 
-    # 파일 리스트 가져오기
-    listdir = os.listdir(path_result)
+        '''
+        height = ymax - ymin
+        width = xmax - xmin
 
-    # 각 개체에 대해 반복
-    for file in listdir:
-        img_path = os.path.join(path_result, file)
-        orig_image = cv2.imread(img_path)
-        if orig_image is None:
-            continue
-        image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
-        boxes, labels, probs = predictor.predict(
-            image, test_candidate_size / 2, test_threshold)
-        for i in range(boxes.size(0)):
-            box = boxes[i, :]
-            xmin = int(box[0])
-            ymin = int(box[1])
-            xmax = int(box[2])
-            ymax = int(box[3])
-            cv2.rectangle(orig_image, (xmin, ymin),
-                          (xmax, ymax), (0, 0, 255), 2)
+        h_2 = int(height*0.05)
+        w_2 = int(width*0.05)
 
-        cv2.imwrite(path_boxed + "boxed.jpg", orig_image)
+        ymin -= 20 * h_2
+        xmin -= 17 * w_2
+        ymax += 14 * h_2
+        xmax += 17 * w_2
+        '''
+    elif num == 1:
+        xmin = int(cropped_face_full_coordinates[sel_idx][0])
+        ymin = int(cropped_face_full_coordinates[sel_idx][1])
+        xmax = int(cropped_face_full_coordinates[sel_idx][2])
+        ymax = int(cropped_face_full_coordinates[sel_idx][3])
+
+    cv2.rectangle(orig_image, (xmin, ymin),
+                  (xmax, ymax), (0, 0, 255), 20)
+
+    cv2.imwrite(path_boxed + "boxed.jpg", orig_image)
 
 
 if __name__ == '__main__':

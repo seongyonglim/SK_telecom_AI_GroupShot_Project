@@ -14,6 +14,9 @@ path_read = "images/selected_img/"
 # 저장할 경로 지정
 path_save = "images/faces_separated/"
 
+# 메인 경로지정
+path_main = "images/main_img/"
+
 
 def main():
     currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -38,7 +41,7 @@ def main():
 
     net.load(model_path)
 
-    # similar 폴더로부터 파일 이름을 저장
+    # selected 폴더로부터 파일 이름을 저장
     listdir = os.listdir(path_read)
     sum = 0
 
@@ -46,6 +49,7 @@ def main():
 
     cropped_face_names_group = []  # crop 된 이미지 이름 사진단위 그룹 저장 리스트
     cropped_face_coordinates_group = []  # crop 된 이미지의 시작점 좌표값 사진단위 그룹 저장 리스트
+    cropped_face_full_coordinates_group = []
     face_imgs_group = []  # crop된 얼굴 이미지 사진단위 그룹 저장 리스트
     face_nums = []  # 얼굴 개수 저장 리스트
 
@@ -54,6 +58,7 @@ def main():
         face_imgs = []  # 잘라진 얼굴파일 임시로 저장하는 리스트
         cropped_face_names = []  # crop 된 이미지 이름 저장 리스트
         cropped_face_coordinates = []  # crop 된 이미지의 시작점 좌표값 저장 리스트
+        cropped_face_full_coordinates = []
         img_path = os.path.join(path_read, file)
         orig_image = cv2.imread(img_path)
         if orig_image is None:
@@ -94,9 +99,13 @@ def main():
             # print("Save into:", path_save + cropped_face_name)
             cropped_face_coordinates.append(
                 [face[0] - 17 * w_2, face[1] - 20 * h_2])
+            cropped_face_full_coordinates.append(
+                [face[0], face[1], face[2], face[3]])
 
         cropped_face_names_group.append(cropped_face_names)
         cropped_face_coordinates_group.append(cropped_face_coordinates)
+        cropped_face_full_coordinates_group.append(
+            cropped_face_full_coordinates)
         face_nums.append(len(c_faces))
         face_imgs_group.append(face_imgs)
 
@@ -123,8 +132,10 @@ def main():
         if len(cropped_face_coordinates_group[i]) != face_nums[main_idx]:
             cropped_face_coordinates_group[i] = cropped_face_coordinates_group[i][:face_nums[main_idx]]
             face_imgs_group[i] = face_imgs_group[i][:face_nums[main_idx]]
+            cropped_face_full_coordinates_group[i] = cropped_face_full_coordinates_group[i][:face_nums[main_idx]]
 
     cropped_face_coordinates = []
+    cropped_face_full_coordinates = []
     for i in range(len(face_imgs_group)):
         for j in range(len(face_imgs_group[i])):
             cropped_face_name = listdir[i][:-4] + "_" + str(j+1)+".jpg"
@@ -132,6 +143,12 @@ def main():
             cropped_face_names.append(cropped_face_name)
             cropped_face_coordinates.append(
                 cropped_face_coordinates_group[i][j])
-    # print(sum)
+            cropped_face_full_coordinates.append(
+                cropped_face_full_coordinates_group[i][j])
+
+    sel_list = os.listdir(path_read)
+    main_full_coordinates = cropped_face_full_coordinates_group[sel_list.index(
+        os.listdir(path_main)[0])]
+
     print('\nFace crop completed')
-    return cropped_face_names, cropped_face_coordinates
+    return cropped_face_names, cropped_face_coordinates, main_full_coordinates, cropped_face_full_coordinates

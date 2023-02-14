@@ -21,11 +21,12 @@ path_face = "images/faces_separated/"  # 얼굴 이미지 저장 경로
 path_result = "images/result_img/"  # 결과물 이미지 저장 경로
 path_boxed = "images/boxed_img/"  # 박스처리 이미지 저장 경로
 path_face_num = "images/face_num/"  # 얼굴 이미지 저장 경로
+path_pageIndex = "images/pageIndex/"  # 몇번째 얼굴 편집중인지 전달 받기위한 폴더 경로
 
 # 현우 수정
 selected_face_path = "images/want_to_modify/"  # 대체할 얼굴 이름 저장
 
-cf_names, cf_coordinates = [], []
+cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates, cur, sel_idx = [], [], [], [], 0, 0
 
 
 # 로컬 폴더 정리 함수
@@ -74,9 +75,17 @@ def init_dirs():
     for file in file_list:
         os.remove(path_face_num + file)
 
+    if not os.path.isdir(path_pageIndex):
+        os.mkdir(path_pageIndex)
+    file_list = os.listdir(path_pageIndex)
+    for file in file_list:
+        os.remove(path_pageIndex + file)
+
 
 # AWS로부터 대표사진 및 선택된 사진들 불러오는 함수
 def download_from_aws():
+    global cur
+    cur = 0
     print('Collecting images')
     di = CloudPath(aws_path+"selected_imgs/")
     di.download_to(path_selected_img)
@@ -88,11 +97,6 @@ def download_from_aws():
 
     main.download_to(path_result)
     os.rename(path_result+os.listdir(path_result)[0], path_result+'result.jpg')
-
-    # 현우 수정
-    draw_face.main()
-    upload_boxed_result_to_aws()
-    print('\nred box upload completed')
 
 
 # AWS로 얼굴 사진들 업로드하는 함수
@@ -139,6 +143,8 @@ def remove_dirs():
     ri.rmtree()
     ri = CloudPath(aws_path+"pageIndex/")
     ri.rmtree()
+    ri = CloudPath(aws_path+"want_to_modify/")
+    ri.rmtree()
     print('\nRemoval Completed')
     return "FLASK: Cleanup_AWS Done"
 
@@ -160,41 +166,58 @@ def check_uploads():
 # 얼굴 crop 하고 AWS에 저장하는 함수
 @ app.route('/crop_face', methods=['GET'])
 def crop_face():
-    global cf_names, cf_coordinates
+    global cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates
     init_dirs()
     download_from_aws()
     # 불러온 사진으로부터 얼굴들만 추출하여 cf_names 에 이름들, cf_coordinates에 시작좌표들 저장
-    cf_names, cf_coordinates = detect_faces_masks.main()
+    cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates = detect_faces_masks.main()
+
+    draw_box(0)
 
     upload_cropped_faces()
     return "FLASK: Crop Face Done"
 
 
-# 현우 수정
-# 터치한 사진 이름 저장한 폴더를 삭제하는 함수
-@app.route('/remove_want_to_modify_dir_AWS', methods=['GET'])
-def remove_want_to_modify_dir():
-    ri = CloudPath(aws_path+"want_to_modify/")
-    ri.rmtree()
-    print('\nRemove want_to_modify_dir Completed')
-    return "Task Done"
+@app.route('/draw_box', methods=['GET'])
+def draw_box_rn():
+    draw_box(0)
+
+
+# 현재 편집중인 얼굴에 박스 그리는 함수
+def draw_box(num):
+    global cur
+    # 매실행마다 pageIndex 다운 받고 비운다
+    file_list = os.listdir(path_pageIndex)
+    for file in file_list:
+        os.remove(path_pageIndex + file)
+
+    pi = CloudPath(aws_path+"pageIndex/")
+    pi.download_to(path_pageIndex)
+
+    pi = CloudPath(aws_path+"pageIndex/")
+    pi.rmtree()
+
+    txt_list = os.listdir(path_pageIndex)
+    if len(txt_list) == 1:
+        cur = int(txt_list[0][:-4])
+
+    draw_face.main(cur, main_full_coordinates,
+                   cropped_face_full_coordinates, num, sel_idx)
+
+    # AWS에 Result 올라감
+    upload_boxed_result_to_aws()
 
 
 # 대표이미지 합성 후 업로드
-# 현우 수정
 @app.route('/combine_face', methods=['GET'])
 def combine_face():
-    # 파일 이름 가져오는 방식을 boto로 사용함
-    # 왜냐하면 cloudpath 왠진 모르겠는데 파일명 가져오는 방식에서 계속 막힘
-    # 필요하면 cloudpath로 가져오는 방식 다시 고민해봄...
-    # boto client s3부터 가져옴
+    global sel_idx
     s3 = boto3.client('s3')
 
     # "want_to_modify" 폴더를 리스트로 만듦
     result = s3.list_objects_v2(
         Bucket='bucketpresident', Prefix='want_to_modify/')
 
-    # 진짜 에러만 엄청 떠서 스트레스 받아 죽을뻔... 에러 뜨면 따로 체크하는 코드가 필요했음
     # want_to_modify 폴더 안에 당연히 파일이 들어가 있어야되는데 없을 때가 있길래... if, else 문 처리
     if 'Contents' in result:
         # 파일 네임 받는 방법
@@ -203,19 +226,17 @@ def combine_face():
         # 3. Key 값 받아옴
         # 4. Key 값을 / 기준으로 나누고 마지막거만 가져옴
         selected_face = result['Contents'][0]['Key'].split('/')[-1]
-
+        sel_idx = cf_names.index(selected_face)
         # 자연스럽게 수정해주어요
         combine.main(cf_names, cf_coordinates, selected_face)
         print('\nFace Combine Completed')
 
         # 합성한 사진위에 다시 박스그리기
-        draw_face.main()
-
-        # AWS에 Result 올라감
-        upload_boxed_result_to_aws()
+        draw_box(1)
 
         # want_to_modify 지움 나이스
-        remove_want_to_modify_dir()
+        ri = CloudPath(aws_path+"want_to_modify/")
+        ri.rmtree()
 
         return "FLASK: Combine Face Done"
     else:
