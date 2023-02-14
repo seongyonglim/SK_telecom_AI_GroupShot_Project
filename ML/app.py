@@ -26,7 +26,7 @@ path_pageIndex = "images/pageIndex/"  # 몇번째 얼굴 편집중인지 전달 
 # 현우 수정
 selected_face_path = "images/want_to_modify/"  # 대체할 얼굴 이름 저장
 
-cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates, cur, sel_idx = [], [], [], [], 0, 0
+cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates, face_idxs, cur, sel_idx = [], [], [], [], [], 0, 0
 
 
 # 로컬 폴더 정리 함수
@@ -166,25 +166,21 @@ def check_uploads():
 # 얼굴 crop 하고 AWS에 저장하는 함수
 @ app.route('/crop_face', methods=['GET'])
 def crop_face():
-    global cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates
+    global cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates, face_idxs
     init_dirs()
     download_from_aws()
     # 불러온 사진으로부터 얼굴들만 추출하여 cf_names 에 이름들, cf_coordinates에 시작좌표들 저장
-    cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates = detect_faces_masks.main()
+    cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates, face_idxs = detect_faces_masks.main()
 
-    draw_box(0)
+    draw_box()
 
     upload_cropped_faces()
     return "FLASK: Crop Face Done"
 
 
-@app.route('/draw_box', methods=['GET'])
-def draw_box_rn():
-    draw_box(0)
-
-
 # 현재 편집중인 얼굴에 박스 그리는 함수
-def draw_box(num):
+@app.route('/draw_box', methods=['GET'])
+def draw_box():
     global cur
     # 매실행마다 pageIndex 다운 받고 비운다
     file_list = os.listdir(path_pageIndex)
@@ -202,16 +198,18 @@ def draw_box(num):
         cur = int(txt_list[0][:-4])
 
     draw_face.main(cur, main_full_coordinates,
-                   cropped_face_full_coordinates, num, sel_idx)
+                   cropped_face_full_coordinates, face_idxs, sel_idx)
 
     # AWS에 Result 올라감
     upload_boxed_result_to_aws()
+
+    return "FLASK: Draw Box Done"
 
 
 # 대표이미지 합성 후 업로드
 @app.route('/combine_face', methods=['GET'])
 def combine_face():
-    global sel_idx
+    global sel_idx, face_idxs
     s3 = boto3.client('s3')
 
     # "want_to_modify" 폴더를 리스트로 만듦
@@ -231,8 +229,10 @@ def combine_face():
         combine.main(cf_names, cf_coordinates, selected_face)
         print('\nFace Combine Completed')
 
+        face_idxs[sel_idx % len(face_idxs)] = sel_idx // len(face_idxs)
+
         # 합성한 사진위에 다시 박스그리기
-        draw_box(1)
+        draw_box()
 
         # want_to_modify 지움 나이스
         ri = CloudPath(aws_path+"want_to_modify/")

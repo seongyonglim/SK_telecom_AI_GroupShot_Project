@@ -116,6 +116,7 @@ def main():
     path_face_num = "images/face_num/"  # 얼굴 개수 저장 경로
     fp = open(path_face_num+str(face_nums[main_idx])+'.txt', 'w')
     fp.close()
+    face_idxs = [-1] * face_nums[main_idx]
 
     for i in range(len(face_nums)):
         if face_nums[i] != face_nums[main_idx]:
@@ -151,4 +152,4 @@ def main():
         os.listdir(path_main)[0])]
 
     print('\nFace crop completed')
-    return cropped_face_names, cropped_face_coordinates, main_full_coordinates, cropped_face_full_coordinates
+    return cropped_face_names, cropped_face_coordinates, main_full_coordinates, cropped_face_full_coordinates, face_idxs

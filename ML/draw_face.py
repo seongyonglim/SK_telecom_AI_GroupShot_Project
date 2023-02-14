@@ -11,13 +11,13 @@ path_boxed = "images/boxed_img/"
 path_main = "images/main_img/"
 
 
-def main(cur, main_full_coordinates, cropped_face_full_coordinates, num, sel_idx):
+def main(cur, main_full_coordinates, cropped_face_full_coordinates, face_idxs, sel_idx):
     # result 파일 불러오기
     file = os.listdir(path_result)[0]
 
     orig_image = cv2.imread(path_result + file)
 
-    if num == 0:
+    if face_idxs[cur] == -1:
         xmin = int(main_full_coordinates[cur][0])
         ymin = int(main_full_coordinates[cur][1])
         xmax = int(main_full_coordinates[cur][2])
@@ -35,7 +35,7 @@ def main(cur, main_full_coordinates, cropped_face_full_coordinates, num, sel_idx
         ymax += 14 * h_2
         xmax += 17 * w_2
         '''
-    elif num == 1:
+    else:
         xmin = int(cropped_face_full_coordinates[sel_idx][0])
         ymin = int(cropped_face_full_coordinates[sel_idx][1])
         xmax = int(cropped_face_full_coordinates[sel_idx][2])
