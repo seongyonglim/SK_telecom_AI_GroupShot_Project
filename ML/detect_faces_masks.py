@@ -101,7 +101,13 @@ def main():
         face_imgs_group.append(face_imgs)
 
     # 얼굴이 아닌 사진 제외 후 저장 파트
+
     main_idx = face_nums.index(max(face_nums, key=face_nums.count))
+
+    path_face_num = "images/face_num/"  # 얼굴 개수 저장 경로
+    fp = open(path_face_num+str(face_nums[main_idx])+'.txt', 'w')
+    fp.close()
+
     for i in range(len(face_nums)):
         if face_nums[i] != face_nums[main_idx]:
             for j in range(face_nums[main_idx]):
@@ -128,4 +134,4 @@ def main():
                 cropped_face_coordinates_group[i][j])
     # print(sum)
     print('\nFace crop completed')
-    return cropped_face_names, cropped_face_coordinates, face_nums[main_idx]
+    return cropped_face_names, cropped_face_coordinates

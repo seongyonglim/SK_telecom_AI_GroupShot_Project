@@ -6,6 +6,7 @@ import SelectHome from '../screens/SelectHome';
 import { useEffect, useState } from 'react';
 import { Asset } from 'expo-asset';
 import PhotoEditing from '../screens/PhotoEditing';
+import Endding from '../screens/Endding';
 
 const ImageAssets = [
   require('../../assets/cover.png'),
@@ -57,6 +58,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="PhotoEditing"
         component={PhotoEditing}
+        options={{ title: '' }}
+      />
+      <Stack.Screen
+        name="Endding"
+        component={Endding}
         options={{ title: '' }}
       />
     </Stack.Navigator>

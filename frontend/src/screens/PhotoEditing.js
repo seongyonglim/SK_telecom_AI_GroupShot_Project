@@ -181,7 +181,7 @@ const PhotoEditing = () => {
 
     setTimeout(() => {
       setLoading(false); // 로딩 스크린 닫기
-    }, 4000);
+    }, 3000);
   };
 
   const handleNextPage = async () => {
@@ -189,10 +189,9 @@ const PhotoEditing = () => {
       setLoading(true);
       await downloadFromS3(pageIndex + 1);
       setPageIndex(pageIndex + 1);
-      console.log(pageIndex);
-      setLoading(false);
     } else {
-      navigation.navigate('Login');
+      navigation.navigate('Endding');
+      axios.get(url + '/upload_result')
     }
   };
 
@@ -201,12 +200,29 @@ const PhotoEditing = () => {
       setLoading(true);
       await downloadFromS3(pageIndex - 1);
       setPageIndex(pageIndex - 1);
-      console.log(pageIndex);
-      setLoading(false);
     } else {
       console.log('팝업 : 첫 번째 사람입니다.');
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const params = {
+        Bucket: AWS_KEY.bucket,
+        Key: `pageIndex/${pageIndex}.txt`,
+        Body: `${pageIndex}`,
+      };
+      const s3 = new AWS.S3({
+        accessKeyId: AWS_KEY.accessKey,
+        secretAccessKey: AWS_KEY.secretKey,
+        region: AWS_KEY.region,
+      });
+      await s3.putObject(params).promise();
+      setLoading(false);
+    })();
+  }, [pageIndex]);
+
   return (
     <View style={styles.container}>
       {/* 로딩화면 */}

@@ -118,7 +118,7 @@ const SelectHome = () => {
         setIsUploading(false);
         setShowModal(false);
         resolve();
-      }, 4500 * photos.length);
+      }, 6500 * photos.length);
     });
   }
 

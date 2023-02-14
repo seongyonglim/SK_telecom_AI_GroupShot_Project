@@ -25,7 +25,7 @@ path_face_num = "images/face_num/"  # 얼굴 이미지 저장 경로
 # 현우 수정
 selected_face_path = "images/want_to_modify/"  # 대체할 얼굴 이름 저장
 
-cf_names, cf_coordinates, face_num = [], [], 0
+cf_names, cf_coordinates = [], []
 
 
 # 로컬 폴더 정리 함수
@@ -106,11 +106,20 @@ def upload_cropped_faces():
     print('\nCropped face images upload completed')
 
 
-# AWS로 결과물 업로드하는 함수
+# AWS로 얼굴에 박스처리한 사진 업로드하는 함수
 def upload_boxed_result_to_aws():
     ui = CloudPath(aws_path+"boxed_img/")
     ui.upload_from(path_boxed)
     print('\nResult image upload completed')
+
+
+# AWS로 결과물 업로드하는 함수
+@ app.route('/upload_result', methods=['GET'])
+def upload_result_to_aws():
+    ui = CloudPath(aws_path+"result_img/")
+    ui.upload_from(path_result)
+    print('\nResult image upload completed')
+    return "FLASK: Upload Result Done"
 
 
 # 얼굴사진 및 최종사진 삭제 함수
@@ -126,8 +135,12 @@ def remove_dirs():
     ri.rmtree()
     ri = CloudPath(aws_path+"face_num/")
     ri.rmtree()
+    ri = CloudPath(aws_path+"boxed_img/")
+    ri.rmtree()
+    ri = CloudPath(aws_path+"pageIndex/")
+    ri.rmtree()
     print('\nRemoval Completed')
-    return "Task Done"
+    return "FLASK: Cleanup_AWS Done"
 
 
 # 업로드 사진 확인 용도로 만들어놓은 함수
@@ -147,16 +160,14 @@ def check_uploads():
 # 얼굴 crop 하고 AWS에 저장하는 함수
 @ app.route('/crop_face', methods=['GET'])
 def crop_face():
-    global cf_names, cf_coordinates, face_num
+    global cf_names, cf_coordinates
     init_dirs()
     download_from_aws()
     # 불러온 사진으로부터 얼굴들만 추출하여 cf_names 에 이름들, cf_coordinates에 시작좌표들 저장
-    cf_names, cf_coordinates, face_num = detect_faces_masks.main()
-    fp = open(path_face_num+str(face_num)+'.txt', 'w')
-    fp.close()
+    cf_names, cf_coordinates = detect_faces_masks.main()
 
     upload_cropped_faces()
-    return "Task Done"
+    return "FLASK: Crop Face Done"
 
 
 # 현우 수정
@@ -206,16 +217,9 @@ def combine_face():
         # want_to_modify 지움 나이스
         remove_want_to_modify_dir()
 
-        return "Task Done"
+        return "FLASK: Combine Face Done"
     else:
         return "No files found in the 'want_to_modify' directory"
-
-
-# 업로드 이미지 확인용
-@ app.route('/check_upload', methods=['GET'])
-def check_uploaded_files():
-    check_uploads()
-    return "Task Done"
 
 
 if __name__ == "__main__":
