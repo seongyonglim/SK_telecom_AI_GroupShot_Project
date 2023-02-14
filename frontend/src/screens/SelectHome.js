@@ -29,6 +29,7 @@ import { AWS_KEY, flask_API } from '../AWS';
 LogBox.ignoreLogs([
   "No native splash screen registered for given view controller. Call 'SplashScreen.show' for given view controller first.",
   'Possible Unhandled Promise Rejection',
+  'undefiend is not an object'
 ]);
 ///////// 이 사이에 main, select option을 넣으세요.
 const main_options = {
