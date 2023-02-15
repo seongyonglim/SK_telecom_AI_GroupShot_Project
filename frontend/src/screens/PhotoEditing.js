@@ -219,7 +219,7 @@ const PhotoEditing = () => {
       }
       setPageIndex(pageIndex + 1);
     } else {
-      navigation.navigate('Endding');
+      navigation.navigate('Ending');
       axios.get(url + '/upload_result');
     }
   };

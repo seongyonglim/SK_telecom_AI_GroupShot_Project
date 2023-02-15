@@ -23,8 +23,6 @@ def main(cur, main_full_coordinates, cropped_face_full_coordinates, face_idxs):
         xmax = int(main_full_coordinates[cur][2])
         ymax = int(main_full_coordinates[cur][3])
 
-        print("cur: ", cur,
-              "main_full_coordinates[cur]: ", main_full_coordinates[cur])
         '''
         height = ymax - ymin
         width = xmax - xmin
@@ -43,8 +41,6 @@ def main(cur, main_full_coordinates, cropped_face_full_coordinates, face_idxs):
         ymin = int(cropped_face_full_coordinates[idx][1])
         xmax = int(cropped_face_full_coordinates[idx][2])
         ymax = int(cropped_face_full_coordinates[idx][3])
-        print("idx: ", idx,
-              "cropped_face_full_coordinates[idx]: ", cropped_face_full_coordinates[idx])
 
     cv2.rectangle(orig_image, (xmin, ymin),
                   (xmax, ymax), (0, 0, 255), 20)

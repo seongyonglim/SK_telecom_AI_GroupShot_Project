@@ -1,10 +1,10 @@
-# GroupShot_AI
+# 잘나왔닷
 
 ---
 
 ## 소개
 
-단체사진 얼굴 보정 앱
+여러장의 단체사진에서 개별 인물들이 가장 잘 나온 얼굴들을 조합하여 모두가 만족할 수 있는 단체사진을 제공하는 앱입니다.
 
 ## 조원 소개
 
@@ -16,80 +16,62 @@
 
 ---
 
-## ML
+## DL
 
-### All-in-one
+- 딥러닝 모델 및 데이터 처리 Python 코드가 담긴 디렉토리입니다.
 
-- Combine\run.py
-  - 아래 딥러닝 기능을 한번에 실행하는 코드
-  - 유저가 선택한 이미지와 날짜비교, 유사도 비교를 하고 얼굴부분을 crop하여 보여줍니다.
-  - 앞의 과정을 거친 후, 크롭된 이미지 좌표값에 따라 바꾸고싶은 이미지에 얼굴에 근접한 부분의 픽셀값을 swap합니다.
-  - 서버 DB에서 form data를 통해 image를 받아 딥러닝을 돌리고, 최종 결과값을 base64 인코딩을 하여 서버로 전송합니다/
+### app.py
 
-### Multiple Face Detect and Crop
+- 백엔드 역할을 담당하는 코드.
+- Flask를 통해 앱으로부터 신호를 주고 받아 요구하는 작업을 수행합니다.
+- AWS를 활용하여 앱으로부터 편집할 이미지를 받아서 처리한 후 다시 앱으로 전송합니다.
+- 아래 언급될 detect_faces_masks.py, draw_face.py, combine.py 모두 import 되고 돌아가게됩니다.
 
-- Dlib_face_cut\crop_faces_save.py
-  - 얼굴을 좌측에서 우측순으로 잘라서 넘버링 후 지정된 폴더에 저장합니다.
+### detect_faces_masks.py
 
-### Photo Similarity
+- 유사한 사진들로부터 얼굴 객체를 탐지하여 crop한 다음 jpg 형태로 저장합니다.
+- 리턴값으로 각 객체의 파일명 및 좌표들을 불러옵니다.
 
-- facecompare/imagecompare.py
-  - 얼굴 기준이 아닌 사진 전체의 유사도를 비교하여 유사하다고 판단될 때 지정된 폴더에 저장합니다.
-- facecompare/face_compare.py
-  - 얼굴 기준으로 얼굴의 유사도를 판단하여 같은 사람이라고 판단될 시에 지정된 폴더에 저장합니다.(2023-01-22 갑자기 안됨???????)
+### draw_face.py
 
-### Face Swap
+- detect_faces_masks.py의 리턴값들을 활용하여 어떤 얼굴을 편집하고 있는지 박스를 그려 사용자에게 보여줍니다.
 
-- faceswap/Best_Image_swap.py
-  - 얼굴의 landmark, 각 노드값을 받아와서 지정된 위치에 따라 얼굴을 swap하는 python code입니다. 최종 결과사진은 지정된 폴더에 저장합니다.
+### combine.py
 
-### ImageDate
-
-- ImageDate/image_date.py
-
-  - 이미지 파일에서 날짜 데이터를 추출하여 같은 날짜에 생성된 이미지를 추출합니다.
-
-- ImageDate/date_and_compare.py
-  - 갤러리 폴더에서 유저가 선택한 이미지와 1차로 같은 날짜에 촬영된 이미지를 먼저 분류하고, 2차로 이미지의 유사도를 판별하여 유사한 사진들을 폴더로 생성합니다,
+- 사용자가 지정한 얼굴을 자연스럽게 합성시킵니다.
 
 ---
 
-## 2023-02-01
+## frontend
 
-### Combined copy
+- React Native 프레임워크로 제작된 프론트앤드 코드가 담긴 디렉토리입니다.
 
-이것 저것 시도해보려고 만든 복사본
-변경점
+### src\screens\Login.js
 
-- 가인이가 만든 app.py 파일 간추림
+- 로그인 화면이 담겨있습니다. 로그인을 하면 SelectHome.js 로 넘어갑니다.
 
-### front-backend-test
+### src\screens\PickerScreen.js
 
-backend 용으로 간단한 이미지 표출만 해보려고 만든 복사본 파일
+- 갤러리로부터 사진을 고르는 화면입니다.
 
-app.js 변경점
-버튼 만듬
-Get Image 누르면 이미지 나옴
+### src\screens\SelectHome.js
 
-일단 지금은 안됨
-버튼 누를때마다 기똥차게 Network request failed 뜸
-![image](https://user-images.githubusercontent.com/72803972/215819148-5478d536-8a0d-4d45-891a-bec2547dabc3.png)
+- PickerScreen.js 와 연결하여 편집을 진행할 사진을 고른 후 대표사진을 선정하는 화면입니다.
+- 선택한 사진들을 AWS로 업로드한 후 서버에 신호를 전송하여 얼굴 객체를 뽑아 전달 받습니다.
+- 위 작업이 끝나면 PhotoEditing.js 로 넘어갑니다
 
-#### Network ERROR 뜨는 이유로 보이는 것
+### src\screens\PhotoEditing.js
 
-##### 원인 의심 1
+- 얼굴 합성을 진행하는 화면입니다.
+- 가장 좌측 얼굴부터 사용자로부터 선택받아 실시간으로 합성을 진행하여 보여줍니다.
+- 모든 얼굴들에 대한 합성이 끝나면 Ending.js 로 넘어갑니다.
 
-POSTMAN에서 지금 body만 지정해줬는데
-마우스를 위에 올려보면 이런 메세지가 보인다.
-![image](https://user-images.githubusercontent.com/72803972/215820586-87cd8f3f-9ae7-436e-8417-fd107a032813.png)
+### src\screens\Ending.js
 
-##### 원인 의심 2
+- 최종 사진을 표출하고 sns에 공유할 수 있는 화면입니다.
 
-POSTMAN에서 HEADER에 들어가면
-connection close로 적혀있는데 이거 때문인가 모르겠음
-![image](https://user-images.githubusercontent.com/72803972/215822294-9aac7115-71ff-42da-a300-6c6dc44e03fc.png)
-![image](https://user-images.githubusercontent.com/72803972/215822348-d01fd788-bfe4-4207-94e8-9467eb53131e.png)
+---
 
-### front-test
+## Referenced git
 
-에이닷 UI 하나부터 쌓아가기 시작하려 만든 복사본
+- https://github.com/Linzaer/Ultra-Light-Fast-Generic-Face-Detector-1MB

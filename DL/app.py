@@ -229,7 +229,6 @@ def combine_face():
         combine.main(cf_names, cf_coordinates, selected_face)
         print('\nFace Combine Completed')
 
-        print('cf_names.index(selected_face)', cf_names.index(selected_face))
         face_idxs[sel_idx % len(face_idxs)] = sel_idx // len(face_idxs)
 
         # 합성한 사진위에 다시 박스그리기
