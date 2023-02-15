@@ -275,14 +275,16 @@ const PhotoEditing = () => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          paddingHorizontal: 16,
+          paddingHorizontal: 23,
+          marginTop : 15,
+          marginBottom : 15,
         }}
       >
         <TouchableOpacity onPress={handlePrevPage}>
-          <FontAwesome name="chevron-left" size={24} color="black" />
+          <FontAwesome name="chevron-left" size={40} color="black" />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleNextPage}>
-          <FontAwesome name="chevron-right" size={24} color="black" />
+          <FontAwesome name="chevron-right" size={40} color="black" />
         </TouchableOpacity>
       </View>
       <Image style={styles.mainImageContainer} source={{ uri: imageUri }} />
@@ -310,7 +312,7 @@ const styles = StyleSheet.create({
   },
   mainImageContainer: {
     width: '100%',
-    height: '60%',
+    height: '67%',
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
@@ -321,7 +323,7 @@ const styles = StyleSheet.create({
     // marginTop: 20,
     // },
     width: 150,
-    height: '95%',
+    height: '90%',
     backgroundColor: 'white',
     borderRadius: 20,
     shadowColor: '#fff',
