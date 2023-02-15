@@ -289,10 +289,11 @@ const PhotoEditing = () => {
 
       <ScrollView horizontal>
         {otherImages.map((image, index) => (
-          <TouchableOpacity key={index} onPress={() => onImageSelected(image)}>
+          <TouchableOpacity key={index} onPress={() => onImageSelected(image)} >
             <Image
               source={{ uri: image }}
               style={styles.croppedImageContainer}
+              
             />
           </TouchableOpacity>
         ))}
@@ -324,6 +325,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     shadowColor: '#fff',
+    marginLeft : 10,
     shadowOffset: {
       width: 0,
       height: 2,

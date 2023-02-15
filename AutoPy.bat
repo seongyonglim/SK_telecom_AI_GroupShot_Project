@@ -1,3 +1,3 @@
-cd ML
+cd DL
 python app.py
 
