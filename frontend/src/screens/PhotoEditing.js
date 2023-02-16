@@ -9,6 +9,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   Modal,
+  Alert,
 } from 'react-native';
 import AWS from 'aws-sdk';
 import axios from 'axios';
@@ -219,8 +220,12 @@ const PhotoEditing = () => {
       }
       setPageIndex(pageIndex + 1);
     } else {
-      navigation.navigate('Ending');
-      axios.get(url + '/upload_result');
+      setLoading(true);
+      setTimeout(() => {
+        navigation.navigate('Ending');
+        axios.get(url + '/upload_result');
+        setLoading(false);
+      }, 500); // 0.5초 로딩
     }
   };
 
@@ -249,7 +254,7 @@ const PhotoEditing = () => {
       }
       setPageIndex(pageIndex - 1);
     } else {
-      console.log('팝업 : 첫 번째 사람입니다.');
+      Alert.alert('팝업 : 첫 번째 사람입니다.');
     }
   };
 
@@ -276,8 +281,8 @@ const PhotoEditing = () => {
           flexDirection: 'row',
           justifyContent: 'space-between',
           paddingHorizontal: 23,
-          marginTop : 15,
-          marginBottom : 15,
+          marginTop: 15,
+          marginBottom: 15,
         }}
       >
         <TouchableOpacity onPress={handlePrevPage}>
@@ -291,11 +296,10 @@ const PhotoEditing = () => {
 
       <ScrollView horizontal>
         {otherImages.map((image, index) => (
-          <TouchableOpacity key={index} onPress={() => onImageSelected(image)} >
+          <TouchableOpacity key={index} onPress={() => onImageSelected(image)}>
             <Image
               source={{ uri: image }}
               style={styles.croppedImageContainer}
-              
             />
           </TouchableOpacity>
         ))}
@@ -327,7 +331,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     shadowColor: '#fff',
-    marginLeft : 10,
+    marginLeft: 10,
     shadowOffset: {
       width: 0,
       height: 2,

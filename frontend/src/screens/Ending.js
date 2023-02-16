@@ -5,11 +5,13 @@ import {
   Image,
   TouchableOpacity,
   Text,
-  alert,
+  Alert,
+  Share,
 } from 'react-native';
-import * as Sharing from 'expo-sharing';
 import AWS from 'aws-sdk';
 import { AWS_KEY } from '../AWS';
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
 
 // AWS S3 설정
 AWS.config.update({
@@ -18,7 +20,7 @@ AWS.config.update({
   region: AWS_KEY.region,
 });
 
-export default function App() {
+const Ending = () => {
   const [imageUri, setImageUri] = useState(null);
 
   const downloadFromS3 = async () => {
@@ -53,14 +55,101 @@ export default function App() {
     setImageUri(imgUrl);
   };
 
-  const shareImage = async () => {
-    if (!(await Sharing.isAvailableAsync())) {
-      alert('Sharing is not available on your platform');
-      return;
+  // 이미지 파일을 저장하는 함수
+  const saveImage = async (imageUri) => {
+    try {
+      const fileUri = FileSystem.documentDirectory + 'image.jpg';
+      await FileSystem.downloadAsync(imageUri, fileUri);
+      const asset = await MediaLibrary.createAssetAsync(fileUri);
+      await MediaLibrary.createAlbumAsync('Expo Image', asset, false);
+      Alert.alert('Image saved to camera roll!');
+    } catch (error) {
+      console.log(error.message);
     }
-
-    Sharing.shareAsync(imageUri);
   };
+  // 이미지 파일을 공유하는 함수
+  const shareImage = async (imageUri) => {
+    try {
+      const answer = await new Promise((resolve) => {
+        Alert.alert(
+          'Save before sharing',
+          'Do you want to save the image before sharing?',
+          [
+            {
+              text: 'Save',
+              onPress: () => {
+                resolve(true);
+              },
+            },
+            {
+              text: 'Cancel',
+              onPress: () => {
+                resolve(false);
+              },
+            },
+          ]
+        );
+      });
+
+      if (answer) {
+        await saveImage(imageUri);
+      }
+
+      const fileUri = `${FileSystem.documentDirectory}image.jpg`;
+      const result = await Share.share({
+        url: fileUri,
+        title: 'Image Sharing',
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // // 이미지 파일을 공유하는 함수
+  // const shareImage = async (imageUri) => {
+  //   try {
+  //     const answer = await new Promise((resolve) => {
+  //       Alert.alert(
+  //         'Save before sharing',
+  //         'Do you want to save the image before sharing?',
+  //         [
+  //           {
+  //             text: 'Save',
+  //             onPress: () => {
+  //               resolve(true);
+  //             },
+  //           },
+  //           {
+  //             text: 'Cancel',
+  //             onPress: () => {
+  //               resolve(false);
+  //             },
+  //           },
+  //         ]
+  //       );
+  //     });
+
+  //     if (answer) {
+  //       await saveImage(imageUri);
+  //     }
+
+  //     const album = await MediaLibrary.getAlbumAsync('Expo Image');
+  //     const photos = await MediaLibrary.getAssetsAsync({
+  //       first: 1,
+  //       album: album,
+  //     });
+
+  //     if (photos && photos.assets.length > 0) {
+  //       const fileUri = `file://${photos.assets[0].uri}`;
+  //       const result = await Share.share({
+  //         url: fileUri,
+  //         title: 'Image Sharing',
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   useEffect(() => {
     downloadFromS3();
@@ -75,12 +164,23 @@ export default function App() {
           resizeMode="contain"
         />
       )}
-      <TouchableOpacity style={styles.button} onPress={shareImage}>
-        <Text style={styles.buttonText}>Share Image</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => saveImage(imageUri)}
+        >
+          <Text style={styles.buttonText}>저장하기</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => shareImage(imageUri)}
+        >
+          <Text style={styles.buttonText}>공유하기</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -104,3 +204,5 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
+
+export default Ending;
