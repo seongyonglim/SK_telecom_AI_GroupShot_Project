@@ -193,7 +193,7 @@ def main():
                 starimg = cv2.resize(starimg, (H//4, W//4))
 
                 h, w = starimg.shape[:2]
-                x, y = W-int(w*1.2), H-int(h*3.8)
+                x, y = W-int(w*1.35), H-int(h*3.9)
                 roi = face_imgs_group[i][j][y:y+h, x:x+w]
 
                 fg = cv2.add(roi, starimg)

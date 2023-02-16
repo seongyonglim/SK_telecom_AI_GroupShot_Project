@@ -13,7 +13,7 @@ import draw_face
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bucketpresident/"
+aws_path = "s3://bucketgains/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
@@ -224,7 +224,7 @@ def combine_face():
 
     # "want_to_modify" 폴더를 리스트로 만듦
     result = s3.list_objects_v2(
-        Bucket='bucketpresident', Prefix='want_to_modify/')
+        Bucket='bucketgains', Prefix='want_to_modify/')
 
     # want_to_modify 폴더 안에 당연히 파일이 들어가 있어야되는데 없을 때가 있길래... if, else 문 처리
     if 'Contents' in result:
