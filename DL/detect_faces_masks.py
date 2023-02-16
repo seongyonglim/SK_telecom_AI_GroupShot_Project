@@ -184,22 +184,58 @@ def main():
         recommended_img[i] = eyes_value[i].index(max(eyes_value[i]))
 
     starimg = cv2.imread('star.png', cv2.IMREAD_COLOR)
+    starmask = cv2.imread('star_mask.png', cv2.IMREAD_GRAYSCALE)
+
+    # for i in range(len(face_imgs_group)):
+    #     for j in range(face_nums[main_idx]):
+    #         if i == recommended_img[j]:
+
+    #             H, W = face_imgs_group[i][j].shape[:2]
+    #             starimg = cv2.resize(starimg, (H//4, W//4))
+
+    #             h, w = starimg.shape[:2]
+    #             x, y = W-int(w*1.35), H-int(h*3.9)
+    #             roi = face_imgs_group[i][j][y:y+h, x:x+w]
+                
+    #             # 문제의 그 부분
+
+    #             fg = cv2.add(roi, starimg)
+
+    #             face_imgs_group[i][j][y:y+h, x:x+w] = fg
+    #         cv2.imwrite(
+    #             path_view+cropped_face_names[i*face_nums[main_idx] + j], face_imgs_group[i][j])
+
+    starimg = cv2.imread('star.png', cv2.IMREAD_COLOR)
+    starmask = cv2.imread('star_mask.png', cv2.IMREAD_GRAYSCALE)
 
     for i in range(len(face_imgs_group)):
         for j in range(face_nums[main_idx]):
             if i == recommended_img[j]:
-
                 H, W = face_imgs_group[i][j].shape[:2]
-                starimg = cv2.resize(starimg, (H//4, W//4))
+                starimg_resized = cv2.resize(starimg, (H//4, W//4))
+                starmask_resized = cv2.resize(starmask, (H//4, W//4))
 
-                h, w = starimg.shape[:2]
+                # 마스크가 검은색인 부분은 0, 흰색인 부분은 255의 값을 갖습니다.
+                # mask_inv는 starmask_resized의 반전된 이미지입니다.
+                mask_inv = cv2.bitwise_not(starmask_resized)
+
+                # 별 이미지와 마스크를 사용하여 합성할 영역을 지정합니다.
+                h, w = starimg_resized.shape[:2]
                 x, y = W-int(w*1.35), H-int(h*3.9)
                 roi = face_imgs_group[i][j][y:y+h, x:x+w]
 
-                fg = cv2.add(roi, starimg)
-                face_imgs_group[i][j][y:y+h, x:x+w] = fg
-            cv2.imwrite(
-                path_view+cropped_face_names[i*face_nums[main_idx] + j], face_imgs_group[i][j])
+                # 별 이미지를 마스크로 합성하여 roi 영역에 덧붙입니다.
+                bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
+                fg = cv2.bitwise_and(starimg_resized, starimg_resized, mask=starmask_resized)
+                face_imgs_group[i][j][y:y+h, x:x+w] = cv2.add(bg, fg)
+            
+            cv2.imwrite(path_view + cropped_face_names[i*face_nums[main_idx] + j], face_imgs_group[i][j])
+
+            
+            
+
+
+
 
     print('\nBest Face Selection completed')
     return cropped_face_names, cropped_face_coordinates, main_full_coordinates, cropped_face_full_coordinates, face_idxs
