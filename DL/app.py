@@ -13,7 +13,7 @@ import draw_face
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bucketgains/"
+aws_path = "s3://bucketpresident/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
@@ -22,6 +22,8 @@ path_result = "images/result_img/"  # 결과물 이미지 저장 경로
 path_boxed = "images/boxed_img/"  # 박스처리 이미지 저장 경로
 path_face_num = "images/face_num/"  # 얼굴 이미지 저장 경로
 path_pageIndex = "images/pageIndex/"  # 몇번째 얼굴 편집중인지 전달 받기위한 폴더 경로
+path_face_view = "images/faces_separated_view/"  # 프론트에 보낼 face_seperated 사진 경로 지정
+
 
 # 현우 수정
 selected_face_path = "images/want_to_modify/"  # 대체할 얼굴 이름 저장
@@ -75,11 +77,19 @@ def init_dirs():
     for file in file_list:
         os.remove(path_face_num + file)
 
+    # 프론트로부터 편집 페이지 번호 전달 받아 저장하는 폴더 신규 생성 / 폴더 비우기
     if not os.path.isdir(path_pageIndex):
         os.mkdir(path_pageIndex)
     file_list = os.listdir(path_pageIndex)
     for file in file_list:
         os.remove(path_pageIndex + file)
+
+    # 프론트에 표출할 crop 얼굴 저장 폴더 신규 생성 / 폴더 비우기
+    if not os.path.isdir(path_face_view):
+        os.mkdir(path_face_view)
+    img_list = os.listdir(path_face_view)
+    for img in img_list:
+        os.remove(path_face_view + img)
 
 
 # AWS로부터 대표사진 및 선택된 사진들 불러오는 함수
@@ -102,7 +112,7 @@ def download_from_aws():
 # AWS로 얼굴 사진들 업로드하는 함수
 def upload_cropped_faces():
     ui = CloudPath(aws_path+"cropped_face_imgs/")
-    ui.upload_from(path_face)
+    ui.upload_from(path_face_view)
 
     ui = CloudPath(aws_path+"face_num/")
     ui.upload_from(path_face_num)
@@ -214,7 +224,7 @@ def combine_face():
 
     # "want_to_modify" 폴더를 리스트로 만듦
     result = s3.list_objects_v2(
-        Bucket='bucketgains', Prefix='want_to_modify/')
+        Bucket='bucketpresident', Prefix='want_to_modify/')
 
     # want_to_modify 폴더 안에 당연히 파일이 들어가 있어야되는데 없을 때가 있길래... if, else 문 처리
     if 'Contents' in result:

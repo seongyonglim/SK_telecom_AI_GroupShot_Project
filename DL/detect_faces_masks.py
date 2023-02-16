@@ -17,6 +17,12 @@ path_save = "images/faces_separated/"
 # 메인 경로지정
 path_main = "images/main_img/"
 
+# 눈 객체 탐지 모델
+eye_cascade = cv2.CascadeClassifier('haar/haarcascade_eye.xml')
+
+# 프론트에 보낼 face_seperated 사진 경로 지정
+path_view = "images/faces_separated_view/"
+
 
 def main():
     currentdir = os.path.dirname(os.path.realpath(__file__))
@@ -50,6 +56,7 @@ def main():
     cropped_face_names_group = []  # crop 된 이미지 이름 사진단위 그룹 저장 리스트
     cropped_face_coordinates_group = []  # crop 된 이미지의 시작점 좌표값 사진단위 그룹 저장 리스트
     cropped_face_full_coordinates_group = []
+    real_face_infos_group = []
     face_imgs_group = []  # crop된 얼굴 이미지 사진단위 그룹 저장 리스트
     face_nums = []  # 얼굴 개수 저장 리스트
 
@@ -59,6 +66,7 @@ def main():
         cropped_face_names = []  # crop 된 이미지 이름 저장 리스트
         cropped_face_coordinates = []  # crop 된 이미지의 시작점 좌표값 저장 리스트
         cropped_face_full_coordinates = []
+        real_face_infos = []
         img_path = os.path.join(path_read, file)
         orig_image = cv2.imread(img_path)
         if orig_image is None:
@@ -94,6 +102,8 @@ def main():
                     if k < len(orig_image) and l < len(orig_image[k]):
                         img_blank[i][j] = orig_image[k][l]
 
+            real_face_infos.append([17 * w_2, 20 * h_2, width, height])
+
             # 이미지 저장
             face_imgs.append(img_blank)
             # print("Save into:", path_save + cropped_face_name)
@@ -108,6 +118,7 @@ def main():
             cropped_face_full_coordinates)
         face_nums.append(len(c_faces))
         face_imgs_group.append(face_imgs)
+        real_face_infos_group.append(real_face_infos)
 
     # 얼굴이 아닌 사진 제외 후 저장 파트
 
@@ -134,6 +145,7 @@ def main():
             cropped_face_coordinates_group[i] = cropped_face_coordinates_group[i][:face_nums[main_idx]]
             face_imgs_group[i] = face_imgs_group[i][:face_nums[main_idx]]
             cropped_face_full_coordinates_group[i] = cropped_face_full_coordinates_group[i][:face_nums[main_idx]]
+            real_face_infos_group[i] = real_face_infos_group[i][:face_nums[main_idx]]
 
     cropped_face_coordinates = []
     cropped_face_full_coordinates = []
@@ -150,6 +162,44 @@ def main():
     sel_list = os.listdir(path_read)
     main_full_coordinates = cropped_face_full_coordinates_group[sel_list.index(
         os.listdir(path_main)[0])]
-
     print('\nFace crop completed')
+
+    # 추천 얼굴 선별 알고리즘
+    recommended_img = [0]*face_nums[main_idx]
+    eyes_value = [[0]*len(face_imgs_group) for _ in range(face_nums[main_idx])]
+
+    for i in range(len(face_imgs_group)):
+        for j in range(face_nums[main_idx]):
+            x, y, w, h = real_face_infos_group[i][j]
+
+            gray = cv2.cvtColor(face_imgs_group[i][j], cv2.COLOR_BGR2GRAY)
+            roi_gray = gray[y:y + h, x:x + w]
+
+            eyes = eye_cascade.detectMultiScale(roi_gray)
+
+            if (len(eyes) == 2):
+                eyes_value[j][i] = eyes[0][-1] + eyes[1][-1]
+
+    for i in range(face_nums[main_idx]):
+        recommended_img[i] = eyes_value[i].index(max(eyes_value[i]))
+
+    starimg = cv2.imread('star.png', cv2.IMREAD_COLOR)
+
+    for i in range(len(face_imgs_group)):
+        for j in range(face_nums[main_idx]):
+            if i == recommended_img[j]:
+
+                H, W = face_imgs_group[i][j].shape[:2]
+                starimg = cv2.resize(starimg, (H//4, W//4))
+
+                h, w = starimg.shape[:2]
+                x, y = W-int(w*1.2), H-int(h*3.8)
+                roi = face_imgs_group[i][j][y:y+h, x:x+w]
+
+                fg = cv2.add(roi, starimg)
+                face_imgs_group[i][j][y:y+h, x:x+w] = fg
+            cv2.imwrite(
+                path_view+cropped_face_names[i*face_nums[main_idx] + j], face_imgs_group[i][j])
+
+    print('\nBest Face Selection completed')
     return cropped_face_names, cropped_face_coordinates, main_full_coordinates, cropped_face_full_coordinates, face_idxs
