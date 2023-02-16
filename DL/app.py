@@ -13,7 +13,7 @@ import draw_face
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bucketgains/"
+aws_path = "s3://bucketpresident/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
@@ -105,6 +105,9 @@ def download_from_aws():
     main.download_to(path_main)
     print('\nmain image download completed')
 
+    ui = CloudPath(aws_path+"result_img/")
+    ui.upload_from(path_result)
+
     main.download_to(path_result)
     os.rename(path_result+os.listdir(path_result)[0], path_result+'result.jpg')
 
@@ -120,20 +123,13 @@ def upload_cropped_faces():
     print('\nCropped face images upload completed')
 
 
-# AWS로 얼굴에 박스처리한 사진 업로드하는 함수
+# AWS로 얼굴에 박스처리한 사진 및 결과사진 업로드하는 함수
 def upload_boxed_result_to_aws():
     ui = CloudPath(aws_path+"boxed_img/")
-    ui.upload_from(path_boxed)
-    print('\nResult image upload completed')
-
-
-# AWS로 결과물 업로드하는 함수
-@ app.route('/upload_result', methods=['GET'])
-def upload_result_to_aws():
+    ui.upload_from(path_boxed, force_overwrite_to_cloud=True)
     ui = CloudPath(aws_path+"result_img/")
-    ui.upload_from(path_result)
+    ui.upload_from(path_result, force_overwrite_to_cloud=True)
     print('\nResult image upload completed')
-    return "FLASK: Upload Result Done"
 
 
 # 얼굴사진 및 최종사진 삭제 함수
@@ -224,7 +220,7 @@ def combine_face():
 
     # "want_to_modify" 폴더를 리스트로 만듦
     result = s3.list_objects_v2(
-        Bucket='bucketgains', Prefix='want_to_modify/')
+        Bucket='bucketpresident', Prefix='want_to_modify/')
 
     # want_to_modify 폴더 안에 당연히 파일이 들어가 있어야되는데 없을 때가 있길래... if, else 문 처리
     if 'Contents' in result:
