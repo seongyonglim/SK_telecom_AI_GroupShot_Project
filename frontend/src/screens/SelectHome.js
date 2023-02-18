@@ -25,6 +25,7 @@ import { BLACK, PRIMARY } from '../colors';
 import FastImage from '../components/FastImage';
 import axios from 'axios';
 import { AWS_KEY, flask_API } from '../AWS';
+import AWS from 'aws-sdk';
 
 LogBox.ignoreLogs([
   "No native splash screen registered for given view controller. Call 'SplashScreen.show' for given view controller first.",
@@ -52,7 +53,7 @@ const selected_options = {
 
 /////////
 
-const SelectHome = () => {
+function SelectHome() {
   var url = flask_API;
   const navigation = useNavigation();
   const { params } = useRoute();
@@ -72,8 +73,7 @@ const SelectHome = () => {
   // 이 부분 파일 분리 하고 싶음
   async function uploadToS3() {
     setIsUploading(true);
-    setShowModal(true);
-
+    
     const main_file = {
       uri: mainImage.uri,
       name: mainImage.filename,
@@ -114,19 +114,58 @@ const SelectHome = () => {
     // 그냥 강제로 3초룰 집어넣음
     // **여기서 잠깐, 3초 룰이란?**
     // 일단 로딩 다 끝나고 넘어가는 조건을 집어넣되, 그거랑 상관없이 무조건 로딩화면을 3초 더 보여줌
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        setIsUploading(false);
-        setShowModal(false);
-        resolve();
-      }, 6500 * photos.length);
-    });
+    
+  }
+
+  const s3 = new AWS.S3();
+
+  // s3 버킷 parameter 설정
+  const verifyParams = {
+    Bucket: AWS_KEY.bucket,
+    Prefix: 'crop_finish/',
+  };
+
+  async function waitDownloadCropFinishConfigure(){
+    const data = await s3.listObjects(verifyParams).promise();
+
+    console.log(data.Contents.key)
+    
+    if (data.Contents.some((object) => object.Key.endsWith('.txt'))) {
+      console.log("크롭이 확인됨")
+      return true
+    }
+
   }
 
   const handleOnPress = async () => {
-    uploadToS3().then(() => {
-      navigation.navigate(PhotoEditing);
-    });
+    setShowModal(true);
+
+    try {
+      // AWS S3에 파일 업로드
+      const uploadedFile = await uploadToS3();
+  
+      // 서버에서 파일 처리 결과를 주기적으로 확인
+      const intervalId = setInterval(async () => {
+        let resultFileUrl = await waitDownloadCropFinishConfigure();
+        console.log("데이터 확인중")
+        if (resultFileUrl == true) {   
+          console.log("여기까지 왔어")       
+          // 로딩 화면 숨기기
+          setShowModal(false);
+
+          navigation.navigate(PhotoEditing);
+  
+          // 주기적으로 확인하는 작업 중지
+          clearInterval(intervalId);
+        }
+      }, 3000);
+    } catch (error) {
+      // 에러 처리
+      console.error(error);
+  
+      // 로딩 화면 숨기기
+      setShowModal(false);
+    }
   };
 
   useEffect(() => {
@@ -201,13 +240,16 @@ const SelectHome = () => {
             {/* 버튼을 누르면 AWS S3 업로드 함
             ++ 다음 페이지로 navigate 되야함.
             ++ 로딩시간동안 지루하지 않게 로딩화면을 따로 띄워줘야 함 */}
+             
             <Button
               title="대표사진확정"
               onPress={handleOnPress}
               disabled={isUploading}
-            ></Button>
-            {/* Modal 사용해서 강제 로딩창 실행 */}
-            <Modal visible={showModal}>
+            />
+
+           {/* Modal 사용해서 강제 로딩창 실행 */}
+
+            <Modal animationType={"fade"} visible = {showModal}>
               <View
                 style={{
                   flex: 1,
@@ -222,6 +264,8 @@ const SelectHome = () => {
                 <Image source={require('../../assets/loadingCharacter.gif')} />
               </View>
             </Modal>
+ 
+
             {/* ImageSwiper*/}
           </View>
         ) : (

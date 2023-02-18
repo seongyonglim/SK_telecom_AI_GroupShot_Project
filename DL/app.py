@@ -23,6 +23,7 @@ path_boxed = "images/boxed_img/"  # 박스처리 이미지 저장 경로
 path_face_num = "images/face_num/"  # 얼굴 이미지 저장 경로
 path_pageIndex = "images/pageIndex/"  # 몇번째 얼굴 편집중인지 전달 받기위한 폴더 경로
 path_face_view = "images/faces_separated_view/"  # 프론트에 보낼 face_seperated 사진 경로 지정
+path_crop_finish = "images/crop_finish/" # 프론트에 보낼 crop finish 신호값 저장 경로 지정
 
 
 # 현우 수정
@@ -91,6 +92,13 @@ def init_dirs():
     for img in img_list:
         os.remove(path_face_view + img)
 
+    # 프론트에 표출할 crop 얼굴 저장 폴더 신규 생성 / 폴더 비우기
+    if not os.path.isdir(path_crop_finish):
+        os.mkdir(path_crop_finish)
+    file_list = os.listdir(path_crop_finish)
+    for file in file_list:
+        os.remove(path_crop_finish + file)
+
 
 # AWS로부터 대표사진 및 선택된 사진들 불러오는 함수
 def download_from_aws():
@@ -120,7 +128,13 @@ def upload_cropped_faces():
     ui = CloudPath(aws_path+"face_num/")
     ui.upload_from(path_face_num)
 
-    print('\nCropped face images upload completed')
+
+    cropfinish = open(path_crop_finish+"/crop_finish.txt",'w')
+    cropfinish.close()
+    ui = CloudPath(aws_path+"crop_finish/")
+    ui.upload_from(path_crop_finish)
+
+    print('\nCropped face images upload & configure crop finish completed')
 
 
 # AWS로 얼굴에 박스처리한 사진 및 결과사진 업로드하는 함수
@@ -150,6 +164,8 @@ def remove_dirs():
     ri = CloudPath(aws_path+"pageIndex/")
     ri.rmtree()
     ri = CloudPath(aws_path+"want_to_modify/")
+    ri.rmtree()
+    ri = CloudPath(aws_path+"crop_finish/")
     ri.rmtree()
     print('\nRemoval Completed')
     return "FLASK: Cleanup_AWS Done"
