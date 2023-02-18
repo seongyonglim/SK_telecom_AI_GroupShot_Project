@@ -27,7 +27,6 @@ path_crop_finish = "images/crop_finish/" # 프론트에 보낼 crop finish 신�
 path_py_progress1 = "images/py_progress1/" # 프론트에 보낼 python 진행도 값 경호 지정
 path_py_progress2 = "images/py_progress2/" # 프론트에 보낼 python 진행도 값 경호 지정
 path_py_progress3 = "images/py_progress3/" # 프론트에 보낼 python 진행도 값 경호 지정
-path_py_progress4 = "images/py_progress4/" # 프론트에 보낼 python 진행도 값 경호 지정
 
 
 # 현우 수정
@@ -119,11 +118,6 @@ def init_dirs():
     file_list = os.listdir(path_py_progress3)
     for file in file_list:
         os.remove(path_py_progress3 + file)
-    if not os.path.isdir(path_py_progress4):
-        os.mkdir(path_py_progress4)
-    file_list = os.listdir(path_py_progress4)
-    for file in file_list:
-        os.remove(path_py_progress4 + file)
 
 
 # AWS로부터 대표사진 및 선택된 사진들 불러오는 함수
@@ -135,22 +129,15 @@ def download_from_aws():
     di.download_to(path_selected_img)
     print('\nSelected images download completed')
 
-    progress = open(path_py_progress1+"/1.txt",'w')
-    progress.close()
-    ui = CloudPath(aws_path+"py_progress1/")
-    ui.upload_from(path_py_progress1)
-
-
-
 
     main = CloudPath(aws_path+"main_img/")
     main.download_to(path_main)
     print('\nmain image download completed')
 
-    progress1 = open(path_py_progress2+"/2.txt",'w')
+    progress1 = open(path_py_progress1+"/1.txt",'w')
     progress1.close()
-    ui = CloudPath(aws_path+"py_progress2/")
-    ui.upload_from(path_py_progress2)
+    ui = CloudPath(aws_path+"py_progress1/")
+    ui.upload_from(path_py_progress1)
 
 
 
@@ -164,6 +151,11 @@ def download_from_aws():
 
 # AWS로 얼굴 사진들 업로드하는 함수
 def upload_cropped_faces():
+    progress3 = open(path_py_progress3+"/3.txt",'w')
+    progress3.close()
+    ui = CloudPath(aws_path+"py_progress3/")
+    ui.upload_from(path_py_progress3)
+
     ui = CloudPath(aws_path+"cropped_face_imgs/")
     ui.upload_from(path_face_view)
 
@@ -175,27 +167,22 @@ def upload_cropped_faces():
     cropfinish.close()
     ui = CloudPath(aws_path+"crop_finish/")
     ui.upload_from(path_crop_finish)
-
-    progress3 = open(path_py_progress4+"/4.txt",'w')
-    progress3.close()
-    ui = CloudPath(aws_path+"py_progress4/")
-    ui.upload_from(path_py_progress4)
-
     print('\nCropped face images upload & configure crop finish completed')
 
 
 # AWS로 얼굴에 박스처리한 사진 및 결과사진 업로드하는 함수
 def upload_boxed_result_to_aws():
+    progress2 = open(path_py_progress2+"/2.txt",'w')
+    progress2.close()
+    ui = CloudPath(aws_path+"py_progress2/")
+    ui.upload_from(path_py_progress2)
+
     ui = CloudPath(aws_path+"boxed_img/")
     ui.upload_from(path_boxed, force_overwrite_to_cloud=True)
     ui = CloudPath(aws_path+"result_img/")
     ui.upload_from(path_result, force_overwrite_to_cloud=True)
     print('\nResult image upload completed')
 
-    progress2 = open(path_py_progress3+"/3.txt",'w')
-    progress2.close()
-    ui = CloudPath(aws_path+"py_progress3/")
-    ui.upload_from(path_py_progress3)
 
 
 # 얼굴사진 및 최종사진 삭제 함수

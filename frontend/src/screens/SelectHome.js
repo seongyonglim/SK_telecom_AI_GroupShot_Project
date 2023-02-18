@@ -141,11 +141,6 @@ function SelectHome() {
     Prefix: 'py_progress3/',
   };
 
-  const progress4Params = {
-    Bucket: AWS_KEY.bucket,
-    Prefix: 'py_progress4/',
-  };
-
   async function waitDownloadCropFinishConfigure(){
     const data = await s3.listObjects(verifyParams).promise();
     
@@ -160,6 +155,7 @@ function SelectHome() {
 
     try {
       setProgress(0);
+      setProgress(20);
 
       // AWS S3에 파일 업로드
       const uploadedFile = await uploadToS3();
@@ -171,15 +167,12 @@ function SelectHome() {
         var progress1State = await s3.listObjects(progress1Params).promise();
         var progress2State = await s3.listObjects(progress2Params).promise();
         var progress3State = await s3.listObjects(progress3Params).promise();
-        var progress4State = await s3.listObjects(progress4Params).promise();
         if (progress1State.Contents.some((object) => object.Key.endsWith('1.txt'))){
-          setProgress(25)}
+          setProgress(45)}
         if (progress2State.Contents.some((object) => object.Key.endsWith('2.txt'))){
-          setProgress(50)}
+          setProgress(70)}
         if (progress3State.Contents.some((object) => object.Key.endsWith('3.txt'))){
-          setProgress(80)}
-        if (progress4State.Contents.some((object) => object.Key.endsWith('3.txt'))){
-          setProgress(100)}
+          setProgress(90)}
 
         if (resultFileUrl == true) {         
           // 로딩 화면 숨기기
@@ -294,8 +287,9 @@ function SelectHome() {
                   멋진 단체 사진 만들어 볼까?
                 </Text>
                 <Image source={require('../../assets/loadingCharacter.gif')} />
-                <Text style={styles.label}>Progress {progress}%</Text>
+                <Text style={styles.label}>사진을 편집하고 있어요... {progress}%</Text>
                 <View style={styles.progressBG}>
+                  
                 <View
                   style={[
                     styles.progress,
@@ -303,8 +297,8 @@ function SelectHome() {
                       width: `${progress}%`
                     },
                   ]}
-                />
-              </View>
+                  />
+                </View>
 
               </View>
             </Modal>
@@ -379,16 +373,17 @@ const styles = StyleSheet.create({
   },
   progressBG: {
     width: '90%',
-    height: 15,
-    backgroundColor: '#C4CDD5',
+    height: 30,
+    backgroundColor: '#d8d8d8',
+    // backgroundColor: '#C4CDD5',
     marginHorizontal: 25,
-    borderRadius: 10,
+    borderRadius: 20,
   },
   progress: {
     width: '50%',
-    height: 15,
-    backgroundColor: '#00AB55',
-    borderRadius: 10,
+    height: 30,
+    backgroundColor: '#f7928d',
+    borderRadius: 20,
   },
 
   photoButton: {
