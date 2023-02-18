@@ -66,9 +66,11 @@ function SelectHome() {
   const [isUploading, setIsUploading] = useState(false); // 이거는 S3 업로드 중일 때 로딩하고 있는지를 변수로 지정
   const [showModal, setShowModal] = useState(false); // 로딩화면은 Modal로 깔끔히 정리
   const [currentIndex, setCurrentIndex] = useState(0); // 선택한 사진(메인 사진) 인덱스 변수 지정
+  const [progress, setProgress] = useState(50);
 
   const mainImage = photos[currentIndex]; // 골라온 사진 중에서 선택한 사진을 메인 사진으로 변수 지정
 
+  
   // aws s3로 업로드하는 함수
   // 이 부분 파일 분리 하고 싶음
   async function uploadToS3() {
@@ -114,7 +116,6 @@ function SelectHome() {
     // 그냥 강제로 3초룰 집어넣음
     // **여기서 잠깐, 3초 룰이란?**
     // 일단 로딩 다 끝나고 넘어가는 조건을 집어넣되, 그거랑 상관없이 무조건 로딩화면을 3초 더 보여줌
-    
   }
 
   const s3 = new AWS.S3();
@@ -125,13 +126,30 @@ function SelectHome() {
     Prefix: 'crop_finish/',
   };
 
+  const progress1Params = {
+    Bucket: AWS_KEY.bucket,
+    Prefix: 'py_progress1/',
+  };
+
+  const progress2Params = {
+    Bucket: AWS_KEY.bucket,
+    Prefix: 'py_progress2/',
+  };
+
+  const progress3Params = {
+    Bucket: AWS_KEY.bucket,
+    Prefix: 'py_progress3/',
+  };
+
+  const progress4Params = {
+    Bucket: AWS_KEY.bucket,
+    Prefix: 'py_progress4/',
+  };
+
   async function waitDownloadCropFinishConfigure(){
     const data = await s3.listObjects(verifyParams).promise();
-
-    console.log(data.Contents.key)
     
     if (data.Contents.some((object) => object.Key.endsWith('.txt'))) {
-      console.log("크롭이 확인됨")
       return true
     }
 
@@ -141,15 +159,29 @@ function SelectHome() {
     setShowModal(true);
 
     try {
+      setProgress(0);
+
       // AWS S3에 파일 업로드
       const uploadedFile = await uploadToS3();
   
       // 서버에서 파일 처리 결과를 주기적으로 확인
       const intervalId = setInterval(async () => {
         let resultFileUrl = await waitDownloadCropFinishConfigure();
-        console.log("데이터 확인중")
-        if (resultFileUrl == true) {   
-          console.log("여기까지 왔어")       
+
+        var progress1State = await s3.listObjects(progress1Params).promise();
+        var progress2State = await s3.listObjects(progress2Params).promise();
+        var progress3State = await s3.listObjects(progress3Params).promise();
+        var progress4State = await s3.listObjects(progress4Params).promise();
+        if (progress1State.Contents.some((object) => object.Key.endsWith('1.txt'))){
+          setProgress(25)}
+        if (progress2State.Contents.some((object) => object.Key.endsWith('2.txt'))){
+          setProgress(50)}
+        if (progress3State.Contents.some((object) => object.Key.endsWith('3.txt'))){
+          setProgress(80)}
+        if (progress4State.Contents.some((object) => object.Key.endsWith('3.txt'))){
+          setProgress(100)}
+
+        if (resultFileUrl == true) {         
           // 로딩 화면 숨기기
           setShowModal(false);
 
@@ -262,6 +294,18 @@ function SelectHome() {
                   멋진 단체 사진 만들어 볼까?
                 </Text>
                 <Image source={require('../../assets/loadingCharacter.gif')} />
+                <Text style={styles.label}>Progress {progress}%</Text>
+                <View style={styles.progressBG}>
+                <View
+                  style={[
+                    styles.progress,
+                    {
+                      width: `${progress}%`
+                    },
+                  ]}
+                />
+              </View>
+
               </View>
             </Modal>
  
@@ -326,6 +370,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginVertical: 10,
   },
+
+  label: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#005249',
+    marginBottom: 20,
+  },
+  progressBG: {
+    width: '90%',
+    height: 15,
+    backgroundColor: '#C4CDD5',
+    marginHorizontal: 25,
+    borderRadius: 10,
+  },
+  progress: {
+    width: '50%',
+    height: 15,
+    backgroundColor: '#00AB55',
+    borderRadius: 10,
+  },
+
   photoButton: {
     width: '100%',
     height: '80%',

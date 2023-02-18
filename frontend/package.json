@@ -43,6 +43,7 @@
     "react-native-gesture-handler": "~2.5.0",
     "react-native-google-places-autocomplete": "^2.4.1",
     "react-native-maps": "0.31.1",
+    "react-native-progress-bar-classic": "^1.2.1",
     "react-native-s3-upload": "^0.0.12",
     "react-native-safe-area-context": "4.3.1",
     "react-native-screens": "~3.15.0",

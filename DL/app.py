@@ -24,6 +24,10 @@ path_face_num = "images/face_num/"  # 얼굴 이미지 저장 경로
 path_pageIndex = "images/pageIndex/"  # 몇번째 얼굴 편집중인지 전달 받기위한 폴더 경로
 path_face_view = "images/faces_separated_view/"  # 프론트에 보낼 face_seperated 사진 경로 지정
 path_crop_finish = "images/crop_finish/" # 프론트에 보낼 crop finish 신호값 저장 경로 지정
+path_py_progress1 = "images/py_progress1/" # 프론트에 보낼 python 진행도 값 경호 지정
+path_py_progress2 = "images/py_progress2/" # 프론트에 보낼 python 진행도 값 경호 지정
+path_py_progress3 = "images/py_progress3/" # 프론트에 보낼 python 진행도 값 경호 지정
+path_py_progress4 = "images/py_progress4/" # 프론트에 보낼 python 진행도 값 경호 지정
 
 
 # 현우 수정
@@ -99,6 +103,28 @@ def init_dirs():
     for file in file_list:
         os.remove(path_crop_finish + file)
 
+    # 프론트에 표출할 진행도 폴더 신규 생성 / 폴더 비우기
+    if not os.path.isdir(path_py_progress1):
+        os.mkdir(path_py_progress1)
+    file_list = os.listdir(path_py_progress1)
+    for file in file_list:
+        os.remove(path_py_progress1 + file)
+    if not os.path.isdir(path_py_progress2):
+        os.mkdir(path_py_progress2)
+    file_list = os.listdir(path_py_progress2)
+    for file in file_list:
+        os.remove(path_py_progress2 + file)
+    if not os.path.isdir(path_py_progress3):
+        os.mkdir(path_py_progress3)
+    file_list = os.listdir(path_py_progress3)
+    for file in file_list:
+        os.remove(path_py_progress3 + file)
+    if not os.path.isdir(path_py_progress4):
+        os.mkdir(path_py_progress4)
+    file_list = os.listdir(path_py_progress4)
+    for file in file_list:
+        os.remove(path_py_progress4 + file)
+
 
 # AWS로부터 대표사진 및 선택된 사진들 불러오는 함수
 def download_from_aws():
@@ -109,9 +135,25 @@ def download_from_aws():
     di.download_to(path_selected_img)
     print('\nSelected images download completed')
 
+    progress = open(path_py_progress1+"/1.txt",'w')
+    progress.close()
+    ui = CloudPath(aws_path+"py_progress1/")
+    ui.upload_from(path_py_progress1)
+
+
+
+
     main = CloudPath(aws_path+"main_img/")
     main.download_to(path_main)
     print('\nmain image download completed')
+
+    progress1 = open(path_py_progress2+"/2.txt",'w')
+    progress1.close()
+    ui = CloudPath(aws_path+"py_progress2/")
+    ui.upload_from(path_py_progress2)
+
+
+
 
     ui = CloudPath(aws_path+"result_img/")
     ui.upload_from(path_result)
@@ -134,6 +176,11 @@ def upload_cropped_faces():
     ui = CloudPath(aws_path+"crop_finish/")
     ui.upload_from(path_crop_finish)
 
+    progress3 = open(path_py_progress4+"/4.txt",'w')
+    progress3.close()
+    ui = CloudPath(aws_path+"py_progress4/")
+    ui.upload_from(path_py_progress4)
+
     print('\nCropped face images upload & configure crop finish completed')
 
 
@@ -144,6 +191,11 @@ def upload_boxed_result_to_aws():
     ui = CloudPath(aws_path+"result_img/")
     ui.upload_from(path_result, force_overwrite_to_cloud=True)
     print('\nResult image upload completed')
+
+    progress2 = open(path_py_progress3+"/3.txt",'w')
+    progress2.close()
+    ui = CloudPath(aws_path+"py_progress3/")
+    ui.upload_from(path_py_progress3)
 
 
 # 얼굴사진 및 최종사진 삭제 함수
@@ -166,6 +218,14 @@ def remove_dirs():
     ri = CloudPath(aws_path+"want_to_modify/")
     ri.rmtree()
     ri = CloudPath(aws_path+"crop_finish/")
+    ri.rmtree()
+    ri = CloudPath(aws_path+"py_progress1/")
+    ri.rmtree()
+    ri = CloudPath(aws_path+"py_progress2/")
+    ri.rmtree()
+    ri = CloudPath(aws_path+"py_progress3/")
+    ri.rmtree()
+    ri = CloudPath(aws_path+"py_progress4/")
     ri.rmtree()
     print('\nRemoval Completed')
     return "FLASK: Cleanup_AWS Done"
