@@ -58,7 +58,7 @@ const StackNavigator = () => {
       <Stack.Screen
         name="PhotoEditing"
         component={PhotoEditing}
-        options={{ title: '' }}
+        options={{ title: '' , headerLeft: false, headerStatusBarHeight : -30}}
       />
       <Stack.Screen
         name="Ending"
