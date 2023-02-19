@@ -48,7 +48,7 @@ const StackNavigator = () => {
       <Stack.Screen
         name="SelectHome"
         component={SelectHome}
-        options={{ title: '' }}
+        options={{ title: '', headerLeft: false }}
       />
       <Stack.Screen
         name="PickerScreen"
@@ -58,13 +58,9 @@ const StackNavigator = () => {
       <Stack.Screen
         name="PhotoEditing"
         component={PhotoEditing}
-        options={{ title: '' , headerLeft: false, headerStatusBarHeight : -30}}
-      />
-      <Stack.Screen
-        name="Ending"
-        component={Ending}
         options={{ title: '' }}
       />
+      <Stack.Screen name="Ending" component={Ending} options={{ title: '' }} />
     </Stack.Navigator>
   );
 };

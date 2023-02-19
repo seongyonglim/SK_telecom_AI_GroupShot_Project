@@ -13,7 +13,7 @@ import draw_face
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bucketgains/"
+aws_path = "s3://bucketpresident/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
@@ -23,10 +23,10 @@ path_boxed = "images/boxed_img/"  # 박스처리 이미지 저장 경로
 path_face_num = "images/face_num/"  # 얼굴 이미지 저장 경로
 path_pageIndex = "images/pageIndex/"  # 몇번째 얼굴 편집중인지 전달 받기위한 폴더 경로
 path_face_view = "images/faces_separated_view/"  # 프론트에 보낼 face_seperated 사진 경로 지정
-path_crop_finish = "images/crop_finish/" # 프론트에 보낼 crop finish 신호값 저장 경로 지정
-path_py_progress1 = "images/py_progress1/" # 프론트에 보낼 python 진행도 값 경호 지정
-path_py_progress2 = "images/py_progress2/" # 프론트에 보낼 python 진행도 값 경호 지정
-path_py_progress3 = "images/py_progress3/" # 프론트에 보낼 python 진행도 값 경호 지정
+path_crop_finish = "images/crop_finish/"  # 프론트에 보낼 crop finish 신호값 저장 경로 지정
+path_py_progress1 = "images/py_progress1/"  # 프론트에 보낼 python 진행도 값 경호 지정
+path_py_progress2 = "images/py_progress2/"  # 프론트에 보낼 python 진행도 값 경호 지정
+path_py_progress3 = "images/py_progress3/"  # 프론트에 보낼 python 진행도 값 경호 지정
 
 
 # 현우 수정
@@ -129,18 +129,14 @@ def download_from_aws():
     di.download_to(path_selected_img)
     print('\nSelected images download completed')
 
-
     main = CloudPath(aws_path+"main_img/")
     main.download_to(path_main)
     print('\nmain image download completed')
 
-    progress1 = open(path_py_progress1+"/1.txt",'w')
+    progress1 = open(path_py_progress1+"/1.txt", 'w')
     progress1.close()
     ui = CloudPath(aws_path+"py_progress1/")
     ui.upload_from(path_py_progress1)
-
-
-
 
     ui = CloudPath(aws_path+"result_img/")
     ui.upload_from(path_result)
@@ -151,7 +147,7 @@ def download_from_aws():
 
 # AWS로 얼굴 사진들 업로드하는 함수
 def upload_cropped_faces():
-    progress3 = open(path_py_progress3+"/3.txt",'w')
+    progress3 = open(path_py_progress3+"/3.txt", 'w')
     progress3.close()
     ui = CloudPath(aws_path+"py_progress3/")
     ui.upload_from(path_py_progress3)
@@ -162,8 +158,7 @@ def upload_cropped_faces():
     ui = CloudPath(aws_path+"face_num/")
     ui.upload_from(path_face_num)
 
-
-    cropfinish = open(path_crop_finish+"/crop_finish.txt",'w')
+    cropfinish = open(path_crop_finish+"/crop_finish.txt", 'w')
     cropfinish.close()
     ui = CloudPath(aws_path+"crop_finish/")
     ui.upload_from(path_crop_finish)
@@ -172,7 +167,7 @@ def upload_cropped_faces():
 
 # AWS로 얼굴에 박스처리한 사진 및 결과사진 업로드하는 함수
 def upload_boxed_result_to_aws():
-    progress2 = open(path_py_progress2+"/2.txt",'w')
+    progress2 = open(path_py_progress2+"/2.txt", 'w')
     progress2.close()
     ui = CloudPath(aws_path+"py_progress2/")
     ui.upload_from(path_py_progress2)
@@ -182,7 +177,6 @@ def upload_boxed_result_to_aws():
     ui = CloudPath(aws_path+"result_img/")
     ui.upload_from(path_result, force_overwrite_to_cloud=True)
     print('\nResult image upload completed')
-
 
 
 # 얼굴사진 및 최종사진 삭제 함수
@@ -283,7 +277,7 @@ def combine_face():
 
     # "want_to_modify" 폴더를 리스트로 만듦
     result = s3.list_objects_v2(
-        Bucket='bucketgains', Prefix='want_to_modify/')
+        Bucket='bucketpresident', Prefix='want_to_modify/')
 
     # want_to_modify 폴더 안에 당연히 파일이 들어가 있어야되는데 없을 때가 있길래... if, else 문 처리
     if 'Contents' in result:

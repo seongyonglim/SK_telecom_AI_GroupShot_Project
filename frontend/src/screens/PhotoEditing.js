@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
+  Text,
   Button,
   View,
   TouchableOpacity,
@@ -15,6 +16,7 @@ import AWS from 'aws-sdk';
 import axios from 'axios';
 import { FontAwesome } from '@expo/vector-icons';
 import { AWS_KEY, flask_API } from '../AWS';
+import { WHITE, GRAY, PRIMARY } from '../colors';
 
 // Flask 서버의 URL
 var url = flask_API;
@@ -275,25 +277,20 @@ const PhotoEditing = () => {
         </View>
       </Modal>
       {/* 로딩화면 */}
-
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingHorizontal: 23,
-          marginTop: 15,
-          marginBottom: 15,
-        }}
-      >
-        <TouchableOpacity onPress={handlePrevPage}>
-          <FontAwesome name="chevron-left" size={40} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleNextPage}>
-          <FontAwesome name="chevron-right" size={40} color="black" />
-        </TouchableOpacity>
-      </View>
       <Image style={styles.mainImageContainer} source={{ uri: imageUri }} />
-
+      <TouchableOpacity onPress={handlePrevPage} style={styles.chevronLeft}>
+        <FontAwesome name="chevron-left" size={40} color={WHITE} />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleNextPage} style={styles.chevronRight}>
+        <FontAwesome name="chevron-right" size={40} color={WHITE} />
+      </TouchableOpacity>
+      <View style={styles.rowContainer}>
+        <Image
+          source={require('../../assets/cropdot.gif')}
+          style={styles.cropdot}
+        />
+        <Text style={styles.selectText}>{'가장 잘나온 사진을 골라줘!'}</Text>
+      </View>
       <ScrollView horizontal>
         {otherImages.map((image, index) => (
           <TouchableOpacity key={index} onPress={() => onImageSelected(image)}>
@@ -311,8 +308,10 @@ const PhotoEditing = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
+    alignItems: 'flex-start',
     justifyContent: 'center',
-    backgroundColor: '#afcbf4',
+    backgroundColor: WHITE,
   },
   mainImageContainer: {
     width: '100%',
@@ -327,10 +326,10 @@ const styles = StyleSheet.create({
     // marginTop: 20,
     // },
     width: 150,
-    height: '90%',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    shadowColor: '#fff',
+    height: 150,
+    // backgroundColor: 'white',
+    borderRadius: 10,
+    // shadowColor: '#fff',
     marginLeft: 10,
     shadowOffset: {
       width: 0,
@@ -343,8 +342,43 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
-    marginRight: 10,
-    marginBottom: 10,
+    borderWidth: 4,
+    borderColor: GRAY.DEFAULT,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  chevronLeft: {
+    position: 'absolute',
+    top: '34%',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  chevronRight: {
+    position: 'absolute',
+    top: '34%',
+    bottom: 0,
+    left: '93%',
+    right: 0,
+  },
+  cropdot: {
+    resizeMode: 'contain',
+    justifyContent: 'center',
+    width: 50,
+    height: 50,
+    marginLeft: 20,
+  },
+  selectText: {
+    fontSize: 15,
+    // fontWeight: 'bold',
+    textAlignVertical: 'center',
+    marginLeft: 10,
+    backgroundColor: '#f2f2f2',
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    marginVertical: 5,
   },
 });
 

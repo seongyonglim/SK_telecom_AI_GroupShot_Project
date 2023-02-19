@@ -157,13 +157,7 @@ const Ending = () => {
 
   return (
     <View style={styles.container}>
-      {imageUri && (
-        <Image
-          source={{ uri: imageUri }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      )}
+      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
@@ -187,11 +181,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   image: {
     width: '80%',
     height: '80%',
+    resizeMode: 'contain',
   },
   button: {
     marginTop: 20,
