@@ -289,9 +289,9 @@ const PhotoEditing = () => {
           source={require('../../assets/cropdot.gif')}
           style={styles.cropdot}
         />
-        <Text style={styles.selectText}>{'가장 잘나온 사진을 골라줘!'}</Text>
+        <Text style={styles.selectText}>가장 마음에 드는 사진을 골라줘!</Text>
       </View>
-      <ScrollView horizontal>
+      <ScrollView horizontal persistentScrollbar style={styles.ScrollView}>
         {otherImages.map((image, index) => (
           <TouchableOpacity key={index} onPress={() => onImageSelected(image)}>
             <Image
@@ -312,6 +312,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
     backgroundColor: WHITE,
+    paddingBottom: '5%',
   },
   mainImageContainer: {
     width: '100%',
@@ -327,21 +328,11 @@ const styles = StyleSheet.create({
     // },
     width: 150,
     height: 150,
-    // backgroundColor: 'white',
     borderRadius: 10,
-    // shadowColor: '#fff',
     marginLeft: 10,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 15,
     borderWidth: 4,
     borderColor: GRAY.DEFAULT,
   },
@@ -369,6 +360,10 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     marginLeft: 20,
+  },
+  ScrollView: {
+    backgroundColor: WHITE,
+    marginHorizontal: 15,
   },
   selectText: {
     fontSize: 15,

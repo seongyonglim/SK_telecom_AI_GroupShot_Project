@@ -3,6 +3,7 @@ import {
   StyleSheet,
   View,
   Image,
+  Pressable,
   TouchableOpacity,
   Text,
   Alert,
@@ -12,6 +13,8 @@ import AWS from 'aws-sdk';
 import { AWS_KEY } from '../AWS';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import { GRAY, WHITE, PRIMARY } from '../colors';
 
 // AWS S3 설정
 AWS.config.update({
@@ -159,18 +162,19 @@ const Ending = () => {
     <View style={styles.container}>
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => saveImage(imageUri)}
-        >
+        <Pressable onPress={() => saveImage(imageUri)} style={styles.button}>
+          <MaterialIcons name="save-alt" size={40} color={PRIMARY.DEFAULT} />
           <Text style={styles.buttonText}>저장하기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => shareImage(imageUri)}
-        >
+        </Pressable>
+
+        <Pressable onPress={() => shareImage(imageUri)} style={styles.button}>
+          <Entypo name="share-alternative" size={40} color={PRIMARY.DEFAULT} />
           <Text style={styles.buttonText}>공유하기</Text>
-        </TouchableOpacity>
+        </Pressable>
+        <Image
+          source={require('../../assets/endingdot.gif')}
+          style={styles.endingAdot}
+        />
       </View>
     </View>
   );
@@ -183,20 +187,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // justifyContent: 'center',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+  },
+  endingAdot: {
+    width: 200,
+    height: 250,
+    resizeMode: 'contain',
+    marginTop: -100,
+    marginRight: -30,
+  },
   image: {
     width: '80%',
     height: '80%',
     resizeMode: 'contain',
   },
-  button: {
-    marginTop: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#007AFF',
-    borderRadius: 5,
-  },
+  // button: {
+  //   width: 80,
+  //   height: 80,
+  //   backgroundColor: '#007AFF',
+  //   borderRadius: 15,
+  //   margin: 10,
+  // },
   buttonText: {
-    color: '#fff',
+    color: PRIMARY.DEFAULT,
   },
 });
 
