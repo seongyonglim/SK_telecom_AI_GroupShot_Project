@@ -70,12 +70,11 @@ function SelectHome() {
 
   const mainImage = photos[currentIndex]; // 골라온 사진 중에서 선택한 사진을 메인 사진으로 변수 지정
 
-  
   // aws s3로 업로드하는 함수
   // 이 부분 파일 분리 하고 싶음
   async function uploadToS3() {
     setIsUploading(true);
-    
+
     const main_file = {
       uri: mainImage.uri,
       name: mainImage.filename,
@@ -141,13 +140,12 @@ function SelectHome() {
     Prefix: 'py_progress3/',
   };
 
-  async function waitDownloadCropFinishConfigure(){
+  async function waitDownloadCropFinishConfigure() {
     const data = await s3.listObjects(verifyParams).promise();
-    
-    if (data.Contents.some((object) => object.Key.endsWith('.txt'))) {
-      return true
-    }
 
+    if (data.Contents.some((object) => object.Key.endsWith('.txt'))) {
+      return true;
+    }
   }
 
   const handleOnPress = async () => {
@@ -159,7 +157,7 @@ function SelectHome() {
 
       // AWS S3에 파일 업로드
       const uploadedFile = await uploadToS3();
-  
+
       // 서버에서 파일 처리 결과를 주기적으로 확인
       const intervalId = setInterval(async () => {
         let resultFileUrl = await waitDownloadCropFinishConfigure();
@@ -167,19 +165,28 @@ function SelectHome() {
         var progress1State = await s3.listObjects(progress1Params).promise();
         var progress2State = await s3.listObjects(progress2Params).promise();
         var progress3State = await s3.listObjects(progress3Params).promise();
-        if (progress1State.Contents.some((object) => object.Key.endsWith('1.txt'))){
-          setProgress(45)}
-        if (progress2State.Contents.some((object) => object.Key.endsWith('2.txt'))){
-          setProgress(70)}
-        if (progress3State.Contents.some((object) => object.Key.endsWith('3.txt'))){
-          setProgress(90)}
+        if (
+          progress1State.Contents.some((object) => object.Key.endsWith('1.txt'))
+        ) {
+          setProgress(45);
+        }
+        if (
+          progress2State.Contents.some((object) => object.Key.endsWith('2.txt'))
+        ) {
+          setProgress(70);
+        }
+        if (
+          progress3State.Contents.some((object) => object.Key.endsWith('3.txt'))
+        ) {
+          setProgress(90);
+        }
 
-        if (resultFileUrl == true) {         
+        if (resultFileUrl == true) {
           // 로딩 화면 숨기기
           setShowModal(false);
 
           navigation.navigate(PhotoEditing);
-  
+
           // 주기적으로 확인하는 작업 중지
           clearInterval(intervalId);
         }
@@ -187,7 +194,7 @@ function SelectHome() {
     } catch (error) {
       // 에러 처리
       console.error(error);
-  
+
       // 로딩 화면 숨기기
       setShowModal(false);
     }
@@ -265,16 +272,16 @@ function SelectHome() {
             {/* 버튼을 누르면 AWS S3 업로드 함
             ++ 다음 페이지로 navigate 되야함.
             ++ 로딩시간동안 지루하지 않게 로딩화면을 따로 띄워줘야 함 */}
-             
+
             <Button
               title="대표사진확정"
               onPress={handleOnPress}
               disabled={isUploading}
             />
 
-           {/* Modal 사용해서 강제 로딩창 실행 */}
+            {/* Modal 사용해서 강제 로딩창 실행 */}
 
-            <Modal animationType={"fade"} visible = {showModal}>
+            <Modal animationType={'fade'} visible={showModal}>
               <View
                 style={{
                   flex: 1,
@@ -287,22 +294,21 @@ function SelectHome() {
                   멋진 단체 사진 만들어 볼까?
                 </Text>
                 <Image source={require('../../assets/loadingCharacter.gif')} />
-                <Text style={styles.label}>사진을 편집하고 있어요... {progress}%</Text>
+                <Text style={styles.label}>
+                  사진을 편집하고 있어요... {progress}%
+                </Text>
                 <View style={styles.progressBG}>
-                  
-                <View
-                  style={[
-                    styles.progress,
-                    {
-                      width: `${progress}%`
-                    },
-                  ]}
+                  <View
+                    style={[
+                      styles.progress,
+                      {
+                        width: `${progress}%`,
+                      },
+                    ]}
                   />
                 </View>
-
               </View>
             </Modal>
- 
 
             {/* ImageSwiper*/}
           </View>
@@ -345,7 +351,7 @@ function SelectHome() {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
