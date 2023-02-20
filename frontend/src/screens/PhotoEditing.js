@@ -289,10 +289,36 @@ const PhotoEditing = () => {
       }
     }
   };
-  //////가인 수정할 함수
+
+  const combineParams = {
+    Bucket: AWS_KEY.bucket,
+    Prefix: 'result_img/',
+  };
+
+  const checkDownloadResult = async () => {
+    const combineData = await s3.listObjects(combineParams).promise();
+    if (combineData.Contents.some((object) => object.Key.endsWith('.jpg'))) {
+      return true;
+    }
+  }
+
   const handleGoEnding = async () => {
-    await axios.get(url + 'upload_result').then(
-    navigation.navigate('Ending'));
+    await axios.get(url + 'upload_result');
+    try{
+    const resultLoop = setInterval(async () => {
+      var resultCombineData = await checkDownloadResult();
+      
+
+      if (resultCombineData == true){
+        navigation.navigate('Ending');
+        clearInterval(resultLoop);
+      }
+    },500);
+  } catch (error) {
+    // 에러 처리
+    console.error(error);
+  }
+
   };
 
   return (
