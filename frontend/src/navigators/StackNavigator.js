@@ -13,6 +13,7 @@ const ImageAssets = [
   require('../../assets/home-clock.png'),
   require('../../assets/icon.png'),
   require('../../assets/selectadot.gif'),
+  require('../../assets/endingdot.gif'),
 ];
 
 const Stack = createStackNavigator();
