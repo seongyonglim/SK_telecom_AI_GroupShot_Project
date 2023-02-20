@@ -222,8 +222,8 @@ def main():
         for j in range(face_nums[main_idx]):
             if i == recommended_img[j]:
                 H, W = face_imgs_group[i][j].shape[:2]
-                starimg_resized = cv2.resize(starimg, (H//4, W//4))
-                starmask_resized = cv2.resize(starmask, (H//4, W//4))
+                starimg_resized = cv2.resize(starimg, (W//5, W//5))
+                starmask_resized = cv2.resize(starmask, (W//5, W//5))
 
                 # 마스크가 검은색인 부분은 0, 흰색인 부분은 255의 값을 갖습니다.
                 # mask_inv는 starmask_resized의 반전된 이미지입니다.
@@ -231,7 +231,7 @@ def main():
 
                 # 별 이미지와 마스크를 사용하여 합성할 영역을 지정합니다.
                 h, w = starimg_resized.shape[:2]
-                x, y = W-int(w*1.35), H-int(h*3.9)
+                x, y = int(0.75*W), int(0.05*W)
                 roi = face_imgs_group[i][j][y:y+h, x:x+w]
 
                 # 별 이미지를 마스크로 합성하여 roi 영역에 덧붙입니다.
