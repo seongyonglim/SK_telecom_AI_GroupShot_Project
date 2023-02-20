@@ -81,7 +81,7 @@ function SelectHome() {
       name: mainImage.filename,
       type: 'image/jpg',
     };
-    RNS3.put(main_file, main_options)
+    await RNS3.put(main_file, main_options)
       .then((response) => {
         if (response.status !== 201)
           throw new Error('Failed to upload image to S3');
@@ -111,11 +111,7 @@ function SelectHome() {
           .catch((err) => console.error('not uploaded: ', err));
       }
     }
-
-    // 진짜 로딩 다 끝나고 다음화면으로 넘어가라니까 죽어도 안 되길래...
-    // 그냥 강제로 3초룰 집어넣음
-    // **여기서 잠깐, 3초 룰이란?**
-    // 일단 로딩 다 끝나고 넘어가는 조건을 집어넣되, 그거랑 상관없이 무조건 로딩화면을 3초 더 보여줌
+    setIsUploading(false);
   }
 
   const s3 = new AWS.S3();
@@ -205,6 +201,11 @@ function SelectHome() {
     }
   };
 
+  const resetOnPress = async () => {
+    setPhotos([]);
+    await axios.get(url + 'cleanup_AWS');
+  };
+
   useEffect(() => {
     if (params) {
       setPhotos(params.selectedPhotos ?? []);
@@ -282,6 +283,10 @@ function SelectHome() {
               title="대표사진확정"
               onPress={handleOnPress}
               disabled={isUploading}
+            />
+            <Button
+              title="이전으로"
+              onPress={resetOnPress}
             />
 
             {/* Modal 사용해서 강제 로딩창 실행 */}
