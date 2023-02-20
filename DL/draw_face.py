@@ -88,7 +88,8 @@ def main(cur, main_full_coordinates, cropped_face_full_coordinates, face_idxs):
             # cv2.rectangle(orig_image, (xmin, ymin), (xmax, ymax), (255, 255, 255), 20)
             drawrect(orig_image, (xmin, ymin),
                      (xmax, ymax), (255, 255, 255), 20)
-
+    H, W = orig_image.shape[:2]
+    orig_image = cv2.resize(orig_image, (W//3, H//3))
     cv2.imwrite(path_boxed + "boxed.jpg", orig_image)
 
 

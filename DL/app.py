@@ -174,8 +174,9 @@ def upload_boxed_result_to_aws():
 
     ui = CloudPath(aws_path+"boxed_img/")
     ui.upload_from(path_boxed, force_overwrite_to_cloud=True)
-    ui = CloudPath(aws_path+"result_img/")
-    ui.upload_from(path_result, force_overwrite_to_cloud=True)
+    if cur == len(face_idxs)-1:
+        ui = CloudPath(aws_path+"result_img/")
+        ui.upload_from(path_result, force_overwrite_to_cloud=True)
     print('\nResult image upload completed')
 
 
@@ -308,4 +309,4 @@ if __name__ == "__main__":
     app.run(host='0.0.0.0', port='5000', debug=True)
     # cf_names, cf_coordinates, main_full_coordinates, cropped_face_full_coordinates, face_idxs = detect_faces_masks.main()
     # draw_face.main(cur, main_full_coordinates,
-    #               cropped_face_full_coordinates, face_idxs)
+    #              cropped_face_full_coordinates, face_idxs)

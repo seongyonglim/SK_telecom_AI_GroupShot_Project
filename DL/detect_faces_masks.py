@@ -215,13 +215,20 @@ def main():
     #         cv2.imwrite(
     #             path_view+cropped_face_names[i*face_nums[main_idx] + j], face_imgs_group[i][j])
 
-    starimg = cv2.imread('star.png', cv2.IMREAD_COLOR)
-    starmask = cv2.imread('star_mask.png', cv2.IMREAD_GRAYSCALE)
+    starimg = cv2.imread('heart.png', cv2.IMREAD_COLOR)
+    starmask = cv2.imread('heart_mask.png', cv2.IMREAD_GRAYSCALE)
 
     for i in range(len(face_imgs_group)):
         for j in range(face_nums[main_idx]):
+            H, W = face_imgs_group[i][j].shape[:2]
+            diff = int(abs(H-W)/2)
+            if H > W:
+                face_imgs_group[i][j] = face_imgs_group[i][j][0+diff:H-diff, :]
+            else:
+                face_imgs_group[i][j] = face_imgs_group[i][j][:, 0+diff:W-diff]
+
+            H, W = face_imgs_group[i][j].shape[:2]
             if i == recommended_img[j]:
-                H, W = face_imgs_group[i][j].shape[:2]
                 starimg_resized = cv2.resize(starimg, (W//5, W//5))
                 starmask_resized = cv2.resize(starmask, (W//5, W//5))
 
@@ -239,7 +246,8 @@ def main():
                 fg = cv2.bitwise_and(
                     starimg_resized, starimg_resized, mask=starmask_resized)
                 face_imgs_group[i][j][y:y+h, x:x+w] = cv2.add(bg, fg)
-
+            face_imgs_group[i][j] = cv2.resize(
+                face_imgs_group[i][j], (200, 200))
             cv2.imwrite(
                 path_view + cropped_face_names[i*face_nums[main_idx] + j], face_imgs_group[i][j])
 
