@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # PNG 이미지를 로드합니다.
-img = cv2.imread("heart.png")
+img = cv2.imread("label.png")
 
 # 이미지를 흑백으로 변환합니다.
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -17,12 +17,5 @@ mask = np.zeros_like(mask_img)
 mask[mask_img == 255] = 0
 mask[mask_img != 255] = 255
 
-
-# img_inverted = cv2.bitwise_not(mask)
-
-# # 마스크 이미지를 저장합니다.
-# cv2.imwrite("star_mask.png", img_inverted)
-
-
 # 마스크 이미지를 저장합니다.
-cv2.imwrite("heart_mask.png", mask)
+cv2.imwrite("label_mask.png", mask)

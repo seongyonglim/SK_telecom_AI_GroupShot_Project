@@ -180,6 +180,14 @@ def upload_boxed_result_to_aws():
     print('\nResult image upload completed')
 
 
+# result image 업로드 함수
+@ app.route('/upload_result', methods=['GET'])
+def upload_result():
+    ui = CloudPath(aws_path+"result_img/")
+    ui.upload_from(path_result, force_overwrite_to_cloud=True)
+    return 'FLASK: Upload_result done'
+
+
 # 얼굴사진 및 최종사진 삭제 함수
 @ app.route('/cleanup_AWS', methods=['GET'])
 def remove_dirs():
