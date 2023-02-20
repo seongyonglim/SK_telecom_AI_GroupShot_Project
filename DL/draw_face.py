@@ -56,7 +56,6 @@ def main(cur, main_full_coordinates, cropped_face_full_coordinates, face_idxs):
     orig_image = cv2.imread(path_result + file)
     for i in range(len(face_idxs)):
         if face_idxs[i] == -1:
-            print('x')
             xmin = int(main_full_coordinates[i][0])
             ymin = int(main_full_coordinates[i][1])
             xmax = int(main_full_coordinates[i][2])
@@ -75,7 +74,6 @@ def main(cur, main_full_coordinates, cropped_face_full_coordinates, face_idxs):
             xmax += 17 * w_2
             '''
         else:
-            print('o')
             idx = face_idxs[i]*len(face_idxs)+i
             xmin = int(cropped_face_full_coordinates[idx][0])
             ymin = int(cropped_face_full_coordinates[idx][1])
