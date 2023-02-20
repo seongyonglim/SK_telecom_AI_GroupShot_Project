@@ -194,7 +194,7 @@ const PhotoEditing = () => {
 
     setTimeout(() => {
       setLoading(false); // 로딩 스크린 닫기
-    }, 3000);
+    }, 100);
   };
 
   const handleNextPage = async () => {

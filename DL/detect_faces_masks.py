@@ -106,11 +106,21 @@ def main():
 
             # 이미지 저장
             face_imgs.append(img_blank)
-            # print("Save into:", path_save + cropped_face_name)
+
+            # 좌표값 이쁘게 저장
             cropped_face_coordinates.append(
                 [face[0] - 17 * w_2, face[1] - 20 * h_2])
+
+            diff = abs(height-width)
+            if height > width:
+                face[0] -= int(diff*0.5)
+                face[2] += int(diff*0.5)
+            else:
+                face[1] -= int(diff*0.5)
+                face[3] += int(diff*0.5)
+
             cropped_face_full_coordinates.append(
-                [face[0], face[1], face[2], face[3]])
+                [face[0]-6*h_2, face[1] - 11 * h_2, face[2]+6*h_2, face[3] + 1 * h_2])
 
         cropped_face_names_group.append(cropped_face_names)
         cropped_face_coordinates_group.append(cropped_face_coordinates)
@@ -196,7 +206,7 @@ def main():
     #             h, w = starimg.shape[:2]
     #             x, y = W-int(w*1.35), H-int(h*3.9)
     #             roi = face_imgs_group[i][j][y:y+h, x:x+w]
-                
+
     #             # 문제의 그 부분
 
     #             fg = cv2.add(roi, starimg)
@@ -226,16 +236,12 @@ def main():
 
                 # 별 이미지를 마스크로 합성하여 roi 영역에 덧붙입니다.
                 bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
-                fg = cv2.bitwise_and(starimg_resized, starimg_resized, mask=starmask_resized)
+                fg = cv2.bitwise_and(
+                    starimg_resized, starimg_resized, mask=starmask_resized)
                 face_imgs_group[i][j][y:y+h, x:x+w] = cv2.add(bg, fg)
-            
-            cv2.imwrite(path_view + cropped_face_names[i*face_nums[main_idx] + j], face_imgs_group[i][j])
 
-            
-            
-
-
-
+            cv2.imwrite(
+                path_view + cropped_face_names[i*face_nums[main_idx] + j], face_imgs_group[i][j])
 
     print('\nBest Face Selection completed')
     return cropped_face_names, cropped_face_coordinates, main_full_coordinates, cropped_face_full_coordinates, face_idxs
