@@ -147,7 +147,6 @@ function SelectHome() {
 
   const handleOnPress = async () => {
     setShowModal(true);
-    
 
     try {
       setProgress(20);
@@ -278,16 +277,19 @@ function SelectHome() {
             {/* 버튼을 누르면 AWS S3 업로드 함
             ++ 다음 페이지로 navigate 되야함.
             ++ 로딩시간동안 지루하지 않게 로딩화면을 따로 띄워줘야 함 */}
+            <View style={styles.selectContainer}>
+              <Pressable
+                onPress={handleOnPress}
+                disabled={isUploading}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>대표사진확정</Text>
+              </Pressable>
 
-            <Button
-              title="대표사진확정"
-              onPress={handleOnPress}
-              disabled={isUploading}
-            />
-            <Button
-              title="이전으로"
-              onPress={resetOnPress}
-            />
+              <Pressable onPress={resetOnPress} style={styles.button}>
+                <Text style={styles.buttonText}>이전으로</Text>
+              </Pressable>
+            </View>
 
             {/* Modal 사용해서 강제 로딩창 실행 */}
 

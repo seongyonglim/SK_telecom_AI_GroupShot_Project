@@ -202,13 +202,11 @@ const styles = StyleSheet.create({
     height: '80%',
     resizeMode: 'contain',
   },
-  // button: {
-  //   width: 80,
-  //   height: 80,
-  //   backgroundColor: '#007AFF',
-  //   borderRadius: 15,
-  //   margin: 10,
-  // },
+  button: {
+    width: 80,
+    height: 80,
+    margin: 10,
+  },
   buttonText: {
     color: PRIMARY.DEFAULT,
   },
