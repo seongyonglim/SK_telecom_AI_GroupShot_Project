@@ -66,7 +66,8 @@ function SelectHome() {
   const [isUploading, setIsUploading] = useState(false); // 이거는 S3 업로드 중일 때 로딩하고 있는지를 변수로 지정
   const [showModal, setShowModal] = useState(false); // 로딩화면은 Modal로 깔끔히 정리
   const [currentIndex, setCurrentIndex] = useState(0); // 선택한 사진(메인 사진) 인덱스 변수 지정
-  const [progress, setProgress] = useState(50);
+  const [progress, setProgress] = useState(0);
+  const [progressText, setProgressText] = useState('');
 
   const mainImage = photos[currentIndex]; // 골라온 사진 중에서 선택한 사진을 메인 사진으로 변수 지정
 
@@ -150,10 +151,11 @@ function SelectHome() {
 
   const handleOnPress = async () => {
     setShowModal(true);
+    
 
     try {
-      setProgress(0);
       setProgress(20);
+      setProgressText('얼굴 분석을 시작합니다');
 
       // AWS S3에 파일 업로드
       const uploadedFile = await uploadToS3();
@@ -169,16 +171,19 @@ function SelectHome() {
           progress1State.Contents.some((object) => object.Key.endsWith('1.txt'))
         ) {
           setProgress(45);
+          setProgressText('얼굴인식이 완료되었어요!');
         }
         if (
           progress2State.Contents.some((object) => object.Key.endsWith('2.txt'))
         ) {
           setProgress(70);
+          setProgressText('여러분의 제일 잘 나온 사진을 AI가 찾고 있어요!');
         }
         if (
           progress3State.Contents.some((object) => object.Key.endsWith('3.txt'))
         ) {
           setProgress(90);
+          setProgressText('잠시만 기다려주세요! 곧 결과를 보여드릴게요!');
         }
 
         if (resultFileUrl == true) {
@@ -295,7 +300,7 @@ function SelectHome() {
                 </Text>
                 <Image source={require('../../assets/loadingCharacter.gif')} />
                 <Text style={styles.label}>
-                  사진을 편집하고 있어요... {progress}%
+                  {progressText}...{progress}%
                 </Text>
                 <View style={styles.progressBG}>
                   <View
