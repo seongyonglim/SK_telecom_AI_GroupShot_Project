@@ -138,8 +138,8 @@ def download_from_aws():
     ui = CloudPath(aws_path+"py_progress1/")
     ui.upload_from(path_py_progress1)
 
-    ui = CloudPath(aws_path+"result_img/")
-    ui.upload_from(path_result)
+    # ui = CloudPath(aws_path+"result_img/")
+    # ui.upload_from(path_result)
 
     main.download_to(path_result)
     os.rename(path_result+os.listdir(path_result)[0], path_result+'result.jpg')
@@ -174,10 +174,10 @@ def upload_boxed_result_to_aws():
 
     ui = CloudPath(aws_path+"boxed_img/")
     ui.upload_from(path_boxed, force_overwrite_to_cloud=True)
-    if cur == len(face_idxs)-1:
-        ui = CloudPath(aws_path+"result_img/")
-        ui.upload_from(path_result, force_overwrite_to_cloud=True)
-    print('\nResult image upload completed')
+    # if cur == len(face_idxs)-1:
+    #    ui = CloudPath(aws_path+"result_img/")
+    #    ui.upload_from(path_result, force_overwrite_to_cloud=True)
+    print('\nBoxed image upload completed')
 
 
 # result image 업로드 함수
