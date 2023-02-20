@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import BG from '../../assets/splash1.jpg';
+import BG from '../../assets/splashlogin.jpg';
 import { PRIMARY } from '../colors';
 import { LogBox } from 'react-native';
 import axios from 'axios';
