@@ -166,19 +166,19 @@ function SelectHome() {
           progress1State.Contents.some((object) => object.Key.endsWith('1.txt'))
         ) {
           setProgress(45);
-          setProgressText('얼굴인식이 완료되었어요!');
+          setProgressText('얼굴인식이 완료되었어요! ');
         }
         if (
           progress2State.Contents.some((object) => object.Key.endsWith('2.txt'))
         ) {
           setProgress(70);
-          setProgressText('여러분의 제일 잘 나온 사진을 AI가 찾고 있어요!');
+          setProgressText('제일 잘 나온 사진을 찾고 있어요! ');
         }
         if (
           progress3State.Contents.some((object) => object.Key.endsWith('3.txt'))
         ) {
           setProgress(90);
-          setProgressText('잠시만 기다려주세요! 곧 결과를 보여드릴게요!');
+          setProgressText('곧 결과를 보여드릴게요! ');
         }
 
         if (resultFileUrl == true) {
@@ -230,7 +230,7 @@ function SelectHome() {
       <View>
         {/* 사진을 고른 뒤에는 ImageSwiper를 표출해줍니다. */}
         {photos.length ? (
-          <View style={{ width, height: width }}>
+          <View style={{ width, height: width + 50 }}>
             {/* ImageSwiper */}
             <Swiper
               loop={false}
@@ -277,7 +277,7 @@ function SelectHome() {
             {/* 버튼을 누르면 AWS S3 업로드 함
             ++ 다음 페이지로 navigate 되야함.
             ++ 로딩시간동안 지루하지 않게 로딩화면을 따로 띄워줘야 함 */}
-            <View style={styles.selectContainer}>
+            <View style={styles.buttonContainer}>
               <Pressable
                 onPress={handleOnPress}
                 disabled={isUploading}
@@ -286,7 +286,7 @@ function SelectHome() {
                 <Text style={styles.buttonText}>대표사진확정</Text>
               </Pressable>
 
-              <Pressable onPress={resetOnPress} style={styles.button}>
+              <Pressable onPress={resetOnPress} style={styles.button2}>
                 <Text style={styles.buttonText}>이전으로</Text>
               </Pressable>
             </View>
@@ -377,12 +377,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: '10%',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
   description: {
     color: GRAY.DARK,
     paddingHorizontal: 20,
     marginVertical: 10,
   },
-
   label: {
     fontSize: 15,
     fontWeight: '500',
@@ -492,6 +496,36 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 10,
+  },
+  button: {
+    width: 110,
+    height: 50,
+    margin: 10,
+    backgroundColor: WHITE,
+    borderRadius: 30,
+    borderColor: PRIMARY.DEFAULT,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    padding: 10,
+  },
+  button2: {
+    width: 80,
+    height: 50,
+    margin: 10,
+    backgroundColor: WHITE,
+    borderRadius: 30,
+    borderColor: PRIMARY.DEFAULT,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignSelf: 'center',
+    padding: 10,
+  },
+  buttonText: {
+    color: PRIMARY.DEFAULT,
+    fontWeight: 'bold',
+    fontSize: 15,
   },
 });
 
