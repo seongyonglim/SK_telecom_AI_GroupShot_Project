@@ -13,7 +13,7 @@ import draw_face
 app = Flask(__name__)
 CORS(app)
 
-aws_path = "s3://bucketpresident/"
+aws_path = "s3://bucketgains/"
 
 path_main = "images/main_img/"  # 대표 이미지 저장 경로
 path_selected_img = "images/selected_img/"  # 선택 이미지 저장 경로
@@ -138,8 +138,8 @@ def download_from_aws():
     ui = CloudPath(aws_path+"py_progress1/")
     ui.upload_from(path_py_progress1)
 
-    ui = CloudPath(aws_path+"result_img/")
-    ui.upload_from(path_result)
+    # ui = CloudPath(aws_path+"result_img/")
+    # ui.upload_from(path_result)
 
     main.download_to(path_result)
     os.rename(path_result+os.listdir(path_result)[0], path_result+'result.jpg')
@@ -174,10 +174,10 @@ def upload_boxed_result_to_aws():
 
     ui = CloudPath(aws_path+"boxed_img/")
     ui.upload_from(path_boxed, force_overwrite_to_cloud=True)
-    if cur == len(face_idxs)-1:
-        ui = CloudPath(aws_path+"result_img/")
-        ui.upload_from(path_result, force_overwrite_to_cloud=True)
-    print('\nResult image upload completed')
+    # if cur == len(face_idxs)-1:
+    #    ui = CloudPath(aws_path+"result_img/")
+    #    ui.upload_from(path_result, force_overwrite_to_cloud=True)
+    print('\nBoxed image upload completed')
 
 
 # result image 업로드 함수
@@ -284,7 +284,7 @@ def combine_face():
 
     # "want_to_modify" 폴더를 리스트로 만듦
     result = s3.list_objects_v2(
-        Bucket='bucketpresident', Prefix='want_to_modify/')
+        Bucket='bucketgains', Prefix='want_to_modify/')
 
     # want_to_modify 폴더 안에 당연히 파일이 들어가 있어야되는데 없을 때가 있길래... if, else 문 처리
     if 'Contents' in result:

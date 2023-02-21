@@ -222,17 +222,29 @@ const PhotoEditing = () => {
       }
       setPageIndex(pageIndex + 1);
     } else {
-      setLoading(true);
-      setTimeout(() => {
-        navigation.navigate('Ending');
-        axios.get(url + '/upload_result');
+      try {
+        setLoading(true);
+
+        await s3
+          .putObject({
+            Bucket: AWS_KEY.bucket,
+            Key: `pageIndex/${0}.txt`,
+            Body: `${0}`,
+          })
+          .promise();
+        await axios.get(url + '/draw_box');
+        await downloadFromS3(0);
+      } catch (error) {
+        console.error(error);
+      } finally {
         setLoading(false);
-      }, 500); // 0.5초 로딩
+        setPageIndex(0);
+      }
     }
   };
 
   const handlePrevPage = async () => {
-    if (pageIndex - 1 >= 0) {
+    if (pageIndex >= 1) {
       try {
         setLoading(true);
         const s3 = new AWS.S3({
@@ -256,8 +268,57 @@ const PhotoEditing = () => {
       }
       setPageIndex(pageIndex - 1);
     } else {
-      Alert.alert('팝업 : 첫 번째 사람입니다.');
+      ///////이거 왼쪽으로가다보면 3번사람, 2번사람, 1번사람, 없는 0번사람 찍고 다시 3번사람으로 감
+      try {
+        setLoading(true);
+
+        await s3
+          .putObject({
+            Bucket: AWS_KEY.bucket,
+            Key: `pageIndex/${faceNum-1}.txt`,
+            Body: `${faceNum-1}`,
+          })
+          .promise();
+        await axios.get(url + '/draw_box');
+        await downloadFromS3(faceNum-1);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+        setPageIndex(faceNum-1);
+      }
     }
+  };
+
+  const combineParams = {
+    Bucket: AWS_KEY.bucket,
+    Prefix: 'result_img/',
+  };
+
+  const checkDownloadResult = async () => {
+    const combineData = await s3.listObjects(combineParams).promise();
+    if (combineData.Contents.some((object) => object.Key.endsWith('.jpg'))) {
+      return true;
+    }
+  }
+
+  const handleGoEnding = async () => {
+    await axios.get(url + 'upload_result');
+    try{
+    const resultLoop = setInterval(async () => {
+      var resultCombineData = await checkDownloadResult();
+      
+
+      if (resultCombineData == true){
+        navigation.navigate('Ending');
+        clearInterval(resultLoop);
+      }
+    },500);
+  } catch (error) {
+    // 에러 처리
+    console.error(error);
+  }
+
   };
 
   return (
@@ -277,6 +338,7 @@ const PhotoEditing = () => {
         </View>
       </Modal>
       {/* 로딩화면 */}
+      <Button title={'다음 페이지'} onPress={handleGoEnding} />
       <Image style={styles.mainImageContainer} source={{ uri: imageUri }} />
       <TouchableOpacity onPress={handlePrevPage} style={styles.chevronLeft}>
         <FontAwesome name="chevron-left" size={40} color={WHITE} />
