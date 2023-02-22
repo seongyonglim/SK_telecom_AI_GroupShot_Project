@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
   Text,
@@ -17,6 +17,7 @@ import axios from 'axios';
 import { FontAwesome } from '@expo/vector-icons';
 import { AWS_KEY, flask_API } from '../AWS';
 import { WHITE, GRAY, PRIMARY } from '../colors';
+import HeaderRight from '../components/HeaderRight';
 
 // Flask 서버의 URL
 var url = flask_API;
@@ -48,6 +49,16 @@ const PhotoEditing = () => {
 
   // 네비게이션 객체
   const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    // 헤더에 오른쪽 버튼 추가
+    navigation.setOptions({
+      headerRight: () => (
+        // 오른쪽 버튼의 상태에 따라 비활성화 여부 설정
+        <HeaderRight onPress={handleGoEnding} />
+      ),
+    });
+  }, [navigation, handleGoEnding]);
 
   // S3에서 데이터를 다운로드하는 함수
   const downloadFromS3 = async (pageIndex) => {
@@ -275,17 +286,17 @@ const PhotoEditing = () => {
         await s3
           .putObject({
             Bucket: AWS_KEY.bucket,
-            Key: `pageIndex/${faceNum-1}.txt`,
-            Body: `${faceNum-1}`,
+            Key: `pageIndex/${faceNum - 1}.txt`,
+            Body: `${faceNum - 1}`,
           })
           .promise();
         await axios.get(url + '/draw_box');
-        await downloadFromS3(faceNum-1);
+        await downloadFromS3(faceNum - 1);
       } catch (error) {
         console.error(error);
       } finally {
         setLoading(false);
-        setPageIndex(faceNum-1);
+        setPageIndex(faceNum - 1);
       }
     }
   };
@@ -300,25 +311,23 @@ const PhotoEditing = () => {
     if (combineData.Contents.some((object) => object.Key.endsWith('.jpg'))) {
       return true;
     }
-  }
+  };
 
   const handleGoEnding = async () => {
     await axios.get(url + 'upload_result');
-    try{
-    const resultLoop = setInterval(async () => {
-      var resultCombineData = await checkDownloadResult();
-      
+    try {
+      const resultLoop = setInterval(async () => {
+        var resultCombineData = await checkDownloadResult();
 
-      if (resultCombineData == true){
-        navigation.navigate('Ending');
-        clearInterval(resultLoop);
-      }
-    },500);
-  } catch (error) {
-    // 에러 처리
-    console.error(error);
-  }
-
+        if (resultCombineData == true) {
+          navigation.navigate('Ending');
+          clearInterval(resultLoop);
+        }
+      }, 500);
+    } catch (error) {
+      // 에러 처리
+      console.error(error);
+    }
   };
 
   return (
@@ -338,7 +347,6 @@ const PhotoEditing = () => {
         </View>
       </Modal>
       {/* 로딩화면 */}
-      <Button title={'다음 페이지'} onPress={handleGoEnding} />
       <Image style={styles.mainImageContainer} source={{ uri: imageUri }} />
       <TouchableOpacity onPress={handlePrevPage} style={styles.chevronLeft}>
         <FontAwesome name="chevron-left" size={40} color={WHITE} />
