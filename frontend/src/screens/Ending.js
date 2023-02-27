@@ -163,14 +163,15 @@ const Ending = () => {
       {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
       <View style={styles.buttonContainer}>
         <Pressable onPress={() => saveImage(imageUri)} style={styles.button}>
-          <MaterialIcons name="save-alt" size={40} color={PRIMARY.DEFAULT} />
-          <Text style={styles.buttonText}>저장하기</Text>
+          <MaterialIcons name="save-alt" size={40} color={WHITE} />
+          {/* <Text style={styles.buttonText}>저장하기</Text> */}
         </Pressable>
 
         <Pressable onPress={() => shareImage(imageUri)} style={styles.button}>
-          <Entypo name="share-alternative" size={40} color={PRIMARY.DEFAULT} />
-          <Text style={styles.buttonText}>공유하기</Text>
+          <Entypo name="share" size={40} color={WHITE} />
+          {/* <Text style={styles.buttonText}>공유하기</Text> */}
         </Pressable>
+
         <Image
           source={require('../../assets/endingdot.gif')}
           style={styles.endingAdot}
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    // justifyContent: 'center',
+    justifyContent: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -203,12 +204,23 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   button: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     margin: 10,
+    // marginLeft: 30,
+    justifyContent: 'center',
+    alignContent: 'center',
+    padding: 9,
+    backgroundColor: PRIMARY.DEFAULT,
+    borderRadius: 50,
+    borderColor: PRIMARY.DEFAULT,
+    borderWidth: 1,
   },
   buttonText: {
     color: PRIMARY.DEFAULT,
+    width: '100%',
+    textalign: 'center',
+    marginTop: 3,
   },
 });
 
