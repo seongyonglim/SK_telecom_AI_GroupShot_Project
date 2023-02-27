@@ -249,18 +249,10 @@ function SelectHome() {
                 >
                   <FastImage
                     source={{ uri: photo.uri ?? photo }}
-                    style={StyleSheet.absoluteFill}
-                    resizeMode="cover"
+                    style={styles.photo}
+                    resizeMode="contain"
+                    //resizeMode = "cover"
                   />
-                  {/* <BlurView
-                    intensity={Platform.select({ ios: 10, android: 100 })}
-                  >
-                    <FastImage
-                      source={{ uri: photo.uri ?? photo }}
-                      style={styles.photo}
-                      resizeMode="contain"
-                    />
-                  </BlurView> */}
                   {/* 선택한 것만 체크박스 처리하는 부분 */}
                   {currentIndex === idx && (
                     <View style={styles.checkBoxContainer}>
