@@ -1,10 +1,11 @@
-# 잘나왔닷
-
+# 프로젝트명: 잘나닷닷
 ---
+## 개발스택
+![image](https://user-images.githubusercontent.com/58325946/222321730-e8e9eeca-104e-4bf7-b6a2-2b57e87600ab.png)
+
 
 ## 소개
-
-여러장의 단체사진에서 개별 인물들이 가장 잘 나온 얼굴들을 조합하여 모두가 만족할 수 있는 단체사진을 제공하는 앱입니다.
+<img src="https://user-images.githubusercontent.com/58325946/222318128-d2fe6d3a-d18d-47f1-a178-87050c98cc61.png" width="500" height="280"> 
 
 ## 조원 소개
 
@@ -75,9 +76,14 @@
 - 최종 사진을 표출하고 sns에 공유할 수 있는 화면입니다.
 
 ---
+## 어플 동작 영상
+https://user-images.githubusercontent.com/58325946/222324836-1f55353f-3bf2-42d6-a05e-d9295f683c13.mp4
+
+## 프로젝트 발표자료
+https://youtu.be/8lqacLEb3to
 
 ## Referenced git
 
 - https://github.com/Linzaer/Ultra-Light-Fast-Generic-Face-Detector-1MB
-![seamlessclone](https://user-images.githubusercontent.com/58325946/220177423-6e58cbd0-ec34-4130-94e5-684cc90189bf.gif)
-
+- DeepFake using with opencv seamlessclone function
+<img src="https://user-images.githubusercontent.com/58325946/220177423-6e58cbd0-ec34-4130-94e5-684cc90189bf.gif" width="500" height="280"> 
