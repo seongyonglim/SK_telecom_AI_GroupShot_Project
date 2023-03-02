@@ -1,4 +1,4 @@
-# 프로젝트명: 잘나닷닷
+# 프로젝트명: 잘나왔닷
 ---
 ## 개발스택
 ![image](https://user-images.githubusercontent.com/58325946/222321730-e8e9eeca-104e-4bf7-b6a2-2b57e87600ab.png)
